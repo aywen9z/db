@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Dragon Ball Clicker: Édition Ultime</title>
+    <title>Dragon Ball Clicker: Édition 21</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
         body { margin: 0; background-color: #111; color: #fff; font-family: 'Press Start 2P', cursive; user-select: none; display: flex; justify-content: center; overflow: hidden; }
@@ -17,11 +17,18 @@
         #power-level-container { font-size: 11px; color: #e74c3c; text-shadow: 2px 2px #000; font-weight: bold; }
         #title-container { color: #f1c40f; font-size: 8px; margin-top: 2px;}
 
-        #battle-zone { flex: 1.5; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 50px 30px 50px; position: relative; background: linear-gradient(to bottom, #4facfe 0%, #00f2fe 100%); border-bottom: 5px solid #333; overflow: hidden; transition: filter 0.1s; }
+        #battle-zone { 
+            flex: 1.5; display: flex; justify-content: space-between; align-items: flex-end; 
+            padding: 0 50px 30px 50px; position: relative; 
+            background-size: cover; background-position: center; 
+            border-bottom: 5px solid #333; overflow: hidden; 
+        }
         
         .asset-img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none; }
-        .sprite { width: 120px; height: 120px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); transition: transform 0.1s; display: flex; justify-content: center; align-items: flex-end; }
-        #enemy-sprite { cursor: pointer; width: 150px; height: 150px; }
+        
+        /* CORRECTION DE L'ALIGNEMENT : margin: 0 auto; ajouté ici */
+        .sprite { margin: 0 auto; width: 120px; height: 120px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); transition: transform 0.1s; display: flex; justify-content: center; align-items: flex-end; }
+        #enemy-sprite { margin: 0 auto; cursor: pointer; width: 150px; height: 150px; }
         .ally-sprite { width: 60px; height: 60px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); animation: floatAlly 2s infinite ease-in-out alternate; }
         
         #golden-saibaman { display: none; position: absolute; width: 90px; height: 90px; cursor: pointer; z-index: 40; filter: drop-shadow(0 0 15px gold); }
@@ -68,12 +75,11 @@
         .senzu-btn { background: #2ecc71; border-color: #27ae60; color: #000; }
         .time-btn { background: #8e44ad; border: 4px solid #9b59b6; font-size: 12px; }
 
-        /* SHOP UI RESPONSIVE */
         #shop-controls { background: #111; border-bottom: 2px solid #333; padding: 5px 10px; display: flex; justify-content: flex-end; align-items: center;}
         #multi-buy-btn { background: #34495e; border: 2px solid #2c3e50; color: #fff; font-family: inherit; font-size: 8px; padding: 5px 10px; cursor: pointer; }
         
-        #ui-bottom { background: #111; flex: 1; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 2px; overflow-y: auto;}
-        .shop-panel { padding: 10px; background: #1a1a1a; border-right: 2px solid #333;}
+        #ui-bottom { background: #111; flex: 1; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 2px; overflow-y: auto;}
+        .shop-panel { padding: 8px; background: #1a1a1a; border-right: 2px solid #333;}
         .shop-panel h3 { text-align: center; font-size: 8px; color: #f1c40f; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
 
         button.shop-btn { background: #2c3e50; border: 2px solid #34495e; color: white; font-family: inherit; font-size: 7px; padding: 8px; width: 100%; margin-bottom: 5px; cursor: pointer; text-align: left; line-height: 1.4; }
@@ -101,7 +107,7 @@
         .dps-popup { position: absolute; color: #bdc3c7; font-size: 9px; font-weight: bold; text-shadow: 1px 1px 0 #000; pointer-events: none; animation: floatUp 0.6s forwards; z-index: 15; opacity: 0.7;}
         @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-80px); } }
         
-        .equip-item { font-size: 7px; line-height: 1.6; margin-bottom: 5px; background: #000; padding: 5px; border: 1px solid #333; border-radius: 4px;}
+        .equip-item { font-size: 7px; line-height: 1.6; margin-bottom: 5px; background: #000; padding: 5px; border: 1px solid #333; border-radius: 4px; text-align: left;}
         .equip-icon { font-size: 12px; margin-right: 5px;}
     </style>
 </head>
@@ -143,7 +149,6 @@
     </div>
 </div>
 
-<!-- NOUVEAU : MODAL HORS-LIGNE -->
 <div id="offline-modal" class="modal">
     <div class="modal-content">
         <h2 style="color: #3498db;">ENTRAÎNEMENT TERMINÉ</h2>
@@ -214,20 +219,20 @@
     <div id="ui-bottom">
         <div class="shop-panel" id="training-shop"><h3>🏋️ Entraînement</h3></div>
         <div class="shop-panel" id="allies-shop"><h3>👥 Soutien</h3></div>
-        <!-- NOUVEAU PANNEAU INVENTAIRE -->
+        <div class="shop-panel" id="skills-shop"><h3>🌳 Talents</h3></div>
+        <div class="shop-panel" id="quests-shop"><h3>📜 Quêtes</h3></div>
         <div class="shop-panel" id="equip-shop"><h3>🎒 Sac</h3></div>
         <div class="shop-panel" id="gacha-shop"><h3>🎰 Gacha</h3></div>
         <div class="shop-panel" id="arena-shop"><h3>🏟️ Tournoi</h3></div>
         <div class="shop-panel" id="forms-shop"><h3>✨ Éveil de Ki</h3></div>
         <div class="shop-panel" id="capsule-shop">
-            <h3>🪐 Capsule Corp</h3>
-            <button class="shop-btn prestige-btn" onclick="openPrestigeMenu()">Voyage dans le Temps ⏳</button>
+            <h3>🪐 Voyage</h3>
+            <button class="shop-btn prestige-btn" onclick="openPrestigeMenu()">Machine Trunks ⏳</button>
         </div>
     </div>
 </div>
 
 <script>
-    // FORMATAGE DES NOMBRES AUTO (k, M, B, T)
     function formatNumber(num) {
         if(num >= 1e12) return (num/1e12).toFixed(2) + "T";
         if(num >= 1e9) return (num/1e9).toFixed(2) + "B";
@@ -244,8 +249,20 @@
         wishes: { powerMulti: 1 }, arenaBadges: 0,
         combo: 0, lastClickTime: 0,
         
+        stats: { totalClicks: 0, kills: 0 },
         equip: { scouter: 0, poids: 0, armure: 0, epee: 0 },
         
+        quests: [
+            { text: "Faire 100 Clics", target: 100, type: "clicks", rewardTxt: "1 🏅", rewardType: "medals", rewardAmt: 1, done: false },
+            { text: "Tuer 50 Ennemis", target: 50, type: "kills", rewardTxt: "2 🏅", rewardType: "medals", rewardAmt: 2, done: false },
+            { text: "Atteindre Nv.50", target: 50, type: "level", rewardTxt: "5 ⏳", rewardType: "time", rewardAmt: 5, done: false }
+        ],
+        skills: [
+            { name: "Voie du Zeni", desc: "+10% Zeni", cost: 1, max: 10, level: 0 },
+            { name: "Frappe Brutale", desc: "+20% Dégâts", cost: 2, max: 10, level: 0 },
+            { name: "Maître Critique", desc: "+1% Crit", cost: 3, max: 5, level: 0 }
+        ],
+
         allies: [
             { id: 'krilin', name: 'Krilin', baseCost: 150, dps: 10, count: 0, sprite: '<img src="Krilin.png" class="asset-img" onerror="this.src=\'\'; this.alt=\'🧑🏻‍🦲\';">', unlockEra: 0, assist: 'Kienzan', assistCd: 0 },
             { id: 'piccolo', name: 'Piccolo', baseCost: 1500, dps: 100, count: 0, sprite: '<img src="Piccolo.png" class="asset-img" onerror="this.src=\'\'; this.alt=\'👽\';">', unlockEra: 1, assist: 'Makankosappo', assistCd: 0 }
@@ -268,17 +285,17 @@
 
     const eras = [
         { 
-            name: "L'Enfance", bg: "linear-gradient(to bottom, #87CEEB 0%, #2ecc71 100%)", 
+            name: "L'Enfance", bg: "url('fond_db.png') center/cover", 
             grunts: [{name: "Yamcha", img: "Yamcha.png"}, {name: "Tao Pai Pai", img: "Tao_Pai_Pai.png"}, {name: "Tambourine", img: "Tambourine.png"}], 
             miniboss: "Kame Sennin", minibossSprite: "Kame_Sennin.png", boss: "Piccolo Daimao", bossSprite: "Piccolo_Daimao.png", hpBase: 20, rewardBase: 5 
         },
         { 
-            name: "Saga Saiyan", bg: "linear-gradient(to bottom, #e67e22 0%, #d35400 100%)", 
+            name: "Saga Saiyan", bg: "url('fond_saiyan.png') center/cover", 
             grunts: [{name: "Saibaman", img: "Saibaman.png"}, {name: "Raditz", img: "Raditz.png"}], 
             miniboss: "Nappa", minibossSprite: "Nappa.png", boss: "Vegeta", bossSprite: "Vegeta.png", hpBase: 10000, rewardBase: 200 
         },
         { 
-            name: "Saga Namek", bg: "linear-gradient(to bottom, #1abc9c 0%, #16a085 100%)", 
+            name: "Saga Namek", bg: "url('fond_namek.png') center/cover", 
             grunts: [{name: "Dodoria", img: "Dodoria.png"}, {name: "Zarbon", img: "Zarbon.png"}, {name: "Ginyu", img: "Ginyu.png"}], 
             miniboss: "Commando Ginyu", minibossSprite: "Ginyu.png", boss: "Freezer", bossSprite: "Freezer.png", hpBase: 500000, rewardBase: 5000 
         }
@@ -301,26 +318,37 @@
 
     function saveGame() { 
         game.lastSaveTime = Date.now();
-        localStorage.setItem('dbzClickerSave_v19', JSON.stringify(game)); 
+        localStorage.setItem('dbzClickerSave_v21', JSON.stringify(game)); 
     }
     
     function loadGame() {
-        let saved = localStorage.getItem('dbzClickerSave_v19');
+        let saved = localStorage.getItem('dbzClickerSave_v21');
         if (saved) {
             Object.assign(game, JSON.parse(saved));
             game.state = 'farm'; game.burstMode = { active: false, timeLeft: 0, currentForm: null, isOverdrive: false }; game.ki = 0; game.combo = 0;
             if(!game.zenkaiMulti) game.zenkaiMulti = 1;
+            if(!game.stats) game.stats = { totalClicks: 0, kills: 0 };
             if(!game.equip) game.equip = { scouter: 0, poids: 0, armure: 0, epee: 0 };
+            
+            // Intégration rétroactive des nouvelles données
+            if(!game.quests) game.quests = [
+                { text: "Faire 100 Clics", target: 100, type: "clicks", rewardTxt: "1 🏅", rewardType: "medals", rewardAmt: 1, done: false },
+                { text: "Tuer 50 Ennemis", target: 50, type: "kills", rewardTxt: "2 🏅", rewardType: "medals", rewardAmt: 2, done: false },
+                { text: "Atteindre Nv.50", target: 50, type: "level", rewardTxt: "5 ⏳", rewardType: "time", rewardAmt: 5, done: false }
+            ];
+            if(!game.skills) game.skills = [
+                { name: "Voie du Zeni", desc: "+10% Zeni", cost: 1, max: 10, level: 0 },
+                { name: "Frappe Brutale", desc: "+20% Dégâts", cost: 2, max: 10, level: 0 },
+                { name: "Maître Critique", desc: "+1% Crit", cost: 3, max: 5, level: 0 }
+            ];
+
             game.allies.forEach(a => a.assistCd = 0); 
             
-            // LOGIQUE HORS LIGNE
             let now = Date.now();
             let diffSec = Math.floor((now - game.lastSaveTime) / 1000);
             let dps = getTotalDps();
             
-            // Si le joueur est parti plus de 60 secondes et qu'il fait des dégâts passifs
             if (diffSec > 60 && dps > 0) {
-                // Formule : on donne un équivalent de 5% du DPS converti en Zeni par seconde d'absence
                 let offlineGains = Math.floor(diffSec * dps * 0.05); 
                 if(offlineGains > 0) {
                     game.zeni += offlineGains;
@@ -446,10 +474,9 @@
 
     function useSenzu() { game.senzus--; bossTimerLeft = 30; game.allies.forEach(a => a.assistCd = 0); document.getElementById('senzu-modal').style.display = "none"; document.getElementById('timer-text').innerText = bossTimerLeft; updateUI(); renderShop(); showDamagePopup(window.innerWidth/2, 300, "SENZU : RETOUR !", true); }
     
-    // SECURITE AUTO-RETRY BOSS
     function acceptDefeat() { 
         document.getElementById('senzu-modal').style.display = "none"; 
-        game.level = Math.max(1, game.level - 1); // Retour au niveau 99 (ou précédent)
+        game.level = Math.max(1, game.level - 1); 
         game.state = 'farm'; 
         spawnEnemy(); 
     }
@@ -518,7 +545,8 @@
         let base = game.baseClick * getComboMulti(); 
         if (game.burstMode.active && game.burstMode.isOverdrive) base *= 2; 
         if (activeBuff.type === 'Dégâts x2') base *= 2; 
-        base *= (1 + (game.equip.armure * 0.20)); // Buff Equipement
+        base *= (1 + (game.equip.armure * 0.20)); 
+        base *= (1 + (game.skills[1].level * 0.20)); // TALENT : Dégâts
         return base; 
     }
     
@@ -527,12 +555,13 @@
         game.gachaBox.forEach(c => { dps += c.power * c.count; });
         let total = dps * getPrestigeMulti() * getBurstMulti();
         if (activeBuff.type === 'Dégâts x2') total *= 2; 
-        total *= (1 + (game.equip.epee * 0.15)); // Buff Equipement
+        total *= (1 + (game.equip.epee * 0.15)); 
         return total;
     }
 
     function getCritChance() {
-        let pl = getTotalDps(); let baseCrit = 0.05 + (game.combo * 0.005) + (game.equip.scouter * 0.02); // Buff Equipement
+        let pl = getTotalDps(); let baseCrit = 0.05 + (game.combo * 0.005) + (game.equip.scouter * 0.02); 
+        baseCrit += (game.skills[2].level * 0.01); // TALENT : Critique
         if (pl > 100000000) return baseCrit + 0.20;
         if (pl > 1000000) return baseCrit + 0.10;
         return baseCrit > 1 ? 1 : baseCrit;
@@ -542,6 +571,7 @@
         let now = Date.now();
         if (now - game.lastClickTime < 1000) game.combo++; else game.combo = 1;
         game.lastClickTime = now;
+        game.stats.totalClicks++; // QUETE STAT
         
         let cDisplay = document.getElementById('combo-display'); cDisplay.style.display = "block";
         document.getElementById('combo-count').innerText = game.combo; document.getElementById('combo-multi').innerText = "x" + getComboMulti().toFixed(2);
@@ -592,7 +622,11 @@
             document.getElementById('enemy-hp-fill').style.background = "#2ecc71"; document.getElementById('boss-timer').style.display = 'none';
         }
         
-        currentEnemy.hp = currentEnemy.maxHp; document.getElementById('battle-zone').style.background = era.bg; document.getElementById('era-text').innerText = era.name; document.getElementById('level-text').innerText = game.level + "/100";
+        currentEnemy.hp = currentEnemy.maxHp; 
+        document.getElementById('battle-zone').style.background = era.bg; 
+        document.getElementById('era-text').innerText = era.name; 
+        document.getElementById('level-text').innerText = game.level + "/100";
+        
         let ui = document.getElementById('boss-ui-container');
         if (game.state === 'boss') ui.innerHTML = `<button id="btn-flee" onclick="acceptDefeat()">Fuir le combat</button>`; else ui.innerHTML = "";
         updateEnemyUI();
@@ -610,9 +644,8 @@
         if (currentEnemy.hp <= 0) enemyDefeated();
     }
 
-    // GESTION DU DROP D'EQUIPEMENT
     function rollEquipmentDrop() {
-        if(Math.random() > 0.05) return; // 5% de chance de drop
+        if(Math.random() > 0.05) return; 
         let keys = Object.keys(game.equip);
         let drop = keys[Math.floor(Math.random() * keys.length)];
         game.equip[drop]++;
@@ -623,13 +656,19 @@
     }
 
     function enemyDefeated() {
+        game.stats.kills++; // QUETE STAT
+        
         let gain = currentEnemy.reward * getPrestigeMulti();
         if (activeBuff.type === 'Zeni x2') gain *= 2;
-        gain *= (1 + (game.equip.poids * 0.10)); // Buff Equipement
+        gain *= (1 + (game.equip.poids * 0.10)); 
+        gain *= (1 + (game.skills[0].level * 0.10)); // TALENT : Zeni
         game.zeni += gain;
         
+        let enemyRect = document.getElementById('enemy-sprite').getBoundingClientRect();
+        showDamagePopup(enemyRect.left + 50, enemyRect.top, "+" + formatNumber(gain) + " 💰", false);
+
         if (Math.random() < 0.01) { game.senzus++; updateUI();}
-        rollEquipmentDrop(); // Test de Drop Equipement
+        rollEquipmentDrop(); 
         
         if (game.state === 'boss') {
             game.medals += 1; showDamagePopup(window.innerWidth/2, 200, "+1 MÉDAILLE 🏅", true);
@@ -641,35 +680,22 @@
     }
 
     function spawnAttackFX(type) {
-        let fx = document.createElement('div');
-        fx.className = 'fx-' + type;
-        document.getElementById('fx-layer').appendChild(fx);
-        setTimeout(() => fx.remove(), 600);
+        let fx = document.createElement('div'); fx.className = 'fx-' + type; document.getElementById('fx-layer').appendChild(fx); setTimeout(() => fx.remove(), 600);
     }
 
     function useAssist(index) {
         let a = game.allies[index]; if (a.count === 0 || a.assistCd > 0) return;
         a.assistCd = 30;
-        if (a.id === 'krilin') { 
-            spawnAttackFX('kienzan');
-            currentEnemy.armor = false; showDamagePopup(window.innerWidth/2, 300, "KIENZAN ! ARMURE BRISÉE", true); 
-        } 
-        else if (a.id === 'piccolo') { 
-            spawnAttackFX('makan');
-            damageEnemy(game.baseClick * getPrestigeMulti() * 100, false, true); showDamagePopup(window.innerWidth/2, 300, "MAKANKOSAPPO !", true); 
-        }
+        if (a.id === 'krilin') { spawnAttackFX('kienzan'); currentEnemy.armor = false; showDamagePopup(window.innerWidth/2, 300, "KIENZAN ! ARMURE BRISÉE", true); } 
+        else if (a.id === 'piccolo') { spawnAttackFX('makan'); damageEnemy(game.baseClick * getPrestigeMulti() * 100, false, true); showDamagePopup(window.innerWidth/2, 300, "MAKANKOSAPPO !", true); }
         renderShop();
     }
 
     function buyClick() {
         let req = multiBuyOptions[currentMultiIndex];
         let info = getMultiBuyDetails(baseClickCost, 1.5, game.clickUpgrades, game.zeni, req);
-        
         if (info.count > 0 && game.zeni >= info.totalCost) {
-            game.zeni -= info.totalCost;
-            game.clickUpgrades += info.count;
-            game.baseClick = 1 + Math.floor(game.clickUpgrades * 1.2);
-            updateUI(); renderShop();
+            game.zeni -= info.totalCost; game.clickUpgrades += info.count; game.baseClick = 1 + Math.floor(game.clickUpgrades * 1.2); updateUI(); renderShop();
         }
     }
 
@@ -677,11 +703,8 @@
         let a = game.allies[index];
         let req = multiBuyOptions[currentMultiIndex];
         let info = getMultiBuyDetails(a.baseCost, 1.2, a.count, game.zeni, req);
-        
         if (info.count > 0 && game.zeni >= info.totalCost) {
-            game.zeni -= info.totalCost;
-            a.count += info.count;
-            renderShop(); updateUI(); renderAllies();
+            game.zeni -= info.totalCost; a.count += info.count; renderShop(); updateUI(); renderAllies();
         }
     }
 
@@ -690,6 +713,33 @@
         game.burstMode = { active: true, timeLeft: isOverdrive ? 30 : 15, currentForm: form, isOverdrive: isOverdrive }; game.ki = 0;
         let ps = document.getElementById('player-sprite'); ps.innerHTML = form.sprite; ps.style.filter = `drop-shadow(0 0 30px ${form.color}) brightness(1.8)`; 
         document.getElementById('player-form').innerText = form.name + (isOverdrive ? " [OVERDRIVE]" : " [BURST]"); renderShop(); updateUI();
+    }
+
+    function claimQuest(index) {
+        let q = game.quests[index];
+        if (q.done) return;
+        if (q.rewardType === 'medals') game.medals += q.rewardAmt;
+        if (q.rewardType === 'time') game.timeEnergy += q.rewardAmt;
+        q.done = true;
+        
+        // Génère la quête suivante (logique simple infinie)
+        if (q.type === 'clicks') q.target += 500;
+        if (q.type === 'kills') q.target += 200;
+        if (q.type === 'level') q.target += 50;
+        q.done = false;
+        
+        showDamagePopup(window.innerWidth/2, 200, "Quête Accomplie !", true);
+        updateUI(); renderShop();
+    }
+
+    function buySkill(index) {
+        let s = game.skills[index];
+        if (game.medals >= s.cost && s.level < s.max) {
+            game.medals -= s.cost;
+            s.level++;
+            s.cost += 1; // Augmente le prix
+            updateUI(); renderShop();
+        }
     }
 
     function renderAllies() {
@@ -710,7 +760,6 @@
 
         document.getElementById('allies-shop').innerHTML = `<h3>👥 Soutien</h3>` + game.allies.map((a,i) => {
             if (game.eraIndex < a.unlockEra) return ""; 
-            
             let aInfo = getMultiBuyDetails(a.baseCost, 1.2, a.count, game.zeni, req);
             let aDisplayAmt = req === 'MAX' ? aInfo.count : req;
             let aBtnTxt = aDisplayAmt > 0 ? `Acheter (+${aDisplayAmt})<span class="price">${formatNumber(aInfo.totalCost)}</span>` : `Fonds Insuffisants`;
@@ -721,7 +770,28 @@
             return html + `<div style="height:5px;"></div>`;
         }).join('');
 
-        // RENDU INVENTAIRE
+        // RENDU QUETES
+        document.getElementById('quests-shop').innerHTML = `<h3>📜 Quêtes</h3>` + game.quests.map((q, i) => {
+            let progress = 0;
+            if (q.type === 'clicks') progress = game.stats.totalClicks;
+            if (q.type === 'kills') progress = game.stats.kills;
+            if (q.type === 'level') progress = game.level + (game.eraIndex * 100);
+            
+            let displayProg = Math.min(progress, q.target);
+            if (progress >= q.target) {
+                return `<button class="shop-btn" style="background:#27ae60; border-color:#2ecc71;" onclick="claimQuest(${i})">Récupérer<span class="price">${q.rewardTxt}</span></button>`;
+            } else {
+                return `<div class="equip-item">${q.text} <br><span style="color:#f1c40f;">${displayProg}/${q.target}</span></div>`;
+            }
+        }).join('');
+
+        // RENDU TALENTS
+        document.getElementById('skills-shop').innerHTML = `<h3>🌳 Talents</h3>` + game.skills.map((s, i) => {
+            if (s.level >= s.max) return `<button class="shop-btn" disabled>${s.name} (MAX)<br><span style="color:#2ecc71;">${s.desc}</span></button>`;
+            let canBuy = game.medals >= s.cost;
+            return `<button class="shop-btn" ${!canBuy ? "disabled" : ""} onclick="buySkill(${i})">${s.name} (Nv.${s.level})<br><span style="color:#2ecc71;">${s.desc}</span><span class="price-medal">${s.cost} 🏅</span></button>`;
+        }).join('');
+
         document.getElementById('equip-shop').innerHTML = `<h3>🎒 Sac</h3>
             <div class="equip-item"><span class="equip-icon">🕶️</span> Scouter Nv.${game.equip.scouter} <br><span style="color:#2ecc71;">+${game.equip.scouter*2}% Crit</span></div>
             <div class="equip-item"><span class="equip-icon">🏋️</span> Poids Nv.${game.equip.poids} <br><span style="color:#2ecc71;">+${game.equip.poids*10}% Zeni</span></div>
