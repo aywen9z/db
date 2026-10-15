@@ -2,120 +2,135 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Dragon Ball Clicker: Édition 21</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- TITRE MIS À JOUR AVEC LA VERSION -->
+    <title>Dragon Ball Clicker: Édition Ultime - v23</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-        body { margin: 0; background-color: #111; color: #fff; font-family: 'Press Start 2P', cursive; user-select: none; display: flex; justify-content: center; overflow: hidden; }
-        #game-container { width: 100vw; max-width: 1200px; height: 100vh; background: #222; display: flex; flex-direction: column; border: 2px solid #f39c12; position: relative;}
+        body { margin: 0; background-color: #000; color: #fff; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; display: flex; justify-content: center; overflow: hidden; width: 100vw; height: 100vh; }
         
-        header { background: #e67e22; color: #000; padding: 10px; display: flex; justify-content: space-around; font-size: 9px; align-items: center; border-bottom: 3px solid #d35400;}
-        .dragon-balls { color: #c0392b; text-shadow: 1px 1px 0 #fff; }
-        .medals { color: #8e44ad; text-shadow: 1px 1px 0 #fff; }
-        .senzu { color: #2ecc71; text-shadow: 1px 1px 0 #fff; }
-        .time-energy { color: #3498db; text-shadow: 1px 1px 0 #fff; font-weight: bold; }
+        #game-container { width: 100vw; height: 100vh; display: flex; flex-direction: column; position: relative;}
         
-        #power-level-container { font-size: 11px; color: #e74c3c; text-shadow: 2px 2px #000; font-weight: bold; }
-        #title-container { color: #f1c40f; font-size: 8px; margin-top: 2px;}
+        header { background: linear-gradient(to bottom, #e67e22, #d35400); color: #fff; padding: 10px 20px; display: flex; justify-content: space-around; font-size: 14px; align-items: center; border-bottom: 4px solid #a04000; font-weight: bold; text-shadow: 1px 1px 2px #000;}
+        .dragon-balls { color: #f39c12; }
+        .medals { color: #9b59b6; }
+        .senzu { color: #2ecc71; }
+        .time-energy { color: #3498db; }
+        
+        #power-level-container { font-size: 16px; color: #e74c3c; }
+        #title-container { color: #f1c40f; font-size: 12px; margin-top: 4px;}
 
         #battle-zone { 
-            flex: 1.5; display: flex; justify-content: space-between; align-items: flex-end; 
-            padding: 0 50px 30px 50px; position: relative; 
+            flex: 1; display: flex; justify-content: space-between; align-items: flex-end; 
+            padding: 0 5vw 30px 5vw; position: relative; 
             background-size: cover; background-position: center; 
-            border-bottom: 5px solid #333; overflow: hidden; 
+            border-bottom: 5px solid #222; overflow: hidden; 
         }
         
         .asset-img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none; }
         
-        /* CORRECTION DE L'ALIGNEMENT : margin: 0 auto; ajouté ici */
-        .sprite { margin: 0 auto; width: 120px; height: 120px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); transition: transform 0.1s; display: flex; justify-content: center; align-items: flex-end; }
-        #enemy-sprite { margin: 0 auto; cursor: pointer; width: 150px; height: 150px; }
-        .ally-sprite { width: 60px; height: 60px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); animation: floatAlly 2s infinite ease-in-out alternate; }
+        .sprite { margin: 0 auto; width: 180px; height: 180px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.6)); transition: transform 0.05s; display: flex; justify-content: center; align-items: flex-end; }
+        #enemy-sprite { margin: 0 auto; cursor: pointer; width: 250px; height: 250px; }
+        .ally-sprite { width: 90px; height: 90px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); animation: floatAlly 2s infinite ease-in-out alternate; }
         
-        #golden-saibaman { display: none; position: absolute; width: 90px; height: 90px; cursor: pointer; z-index: 40; filter: drop-shadow(0 0 15px gold); }
-        #hoi-poi-capsule { display: none; position: absolute; width: 50px; height: 50px; cursor: pointer; z-index: 45; font-size: 40px; animation: spin 2s linear infinite; filter: drop-shadow(0 0 10px #3498db); }
+        #golden-saibaman { display: none; position: absolute; width: 120px; height: 120px; cursor: pointer; z-index: 40; filter: drop-shadow(0 0 15px gold); }
+        #hoi-poi-capsule { display: none; position: absolute; width: 60px; height: 60px; cursor: pointer; z-index: 45; font-size: 40px; animation: spin 2s linear infinite; filter: drop-shadow(0 0 10px #3498db); }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        #shenron-img { width: 250px; height: 250px; filter: drop-shadow(0 0 20px #2ecc71); animation: floatShenron 2s infinite alternate; margin-bottom: 20px; }
+        #shenron-img { width: 300px; height: 300px; filter: drop-shadow(0 0 20px #2ecc71); animation: floatShenron 2s infinite alternate; margin-bottom: 20px; }
         @keyframes floatShenron { 0% { transform: translateY(0px); } 100% { transform: translateY(-15px); } }
         @keyframes floatAlly { 0% { transform: translateY(0px); } 100% { transform: translateY(-10px); } }
 
         .fx-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 60; }
-        .fx-kienzan { position: absolute; width: 60px; height: 60px; background: radial-gradient(circle, transparent 20%, #f1c40f 40%, #e67e22 80%, transparent 100%); border-radius: 50%; box-shadow: 0 0 15px #f1c40f; animation: kienzanFly 0.6s linear forwards; }
+        
+        /* PROJECTILES DES ALLIÉS */
+        .ally-blast { position: absolute; width: 20px; height: 10px; background: #34dbeb; border-radius: 10px; box-shadow: 0 0 10px #34dbeb, 0 0 20px #fff; animation: blastShoot 0.3s linear forwards; pointer-events: none; z-index: 55; }
+        @keyframes blastShoot { 0% { opacity: 1; transform: translateX(0) scale(1); } 100% { opacity: 0; transform: translateX(40vw) scale(1.5); } }
+
+        .fx-kienzan { position: absolute; width: 80px; height: 80px; background: radial-gradient(circle, transparent 20%, #f1c40f 40%, #e67e22 80%, transparent 100%); border-radius: 50%; box-shadow: 0 0 15px #f1c40f; animation: kienzanFly 0.6s linear forwards; }
         @keyframes kienzanFly { 0% { left: 20%; bottom: 100px; transform: scale(0.5) rotate(0deg); opacity: 0; } 10% { opacity: 1; } 100% { left: 80%; bottom: 150px; transform: scale(1.5) rotate(1080deg); opacity: 0; } }
-        .fx-makan { position: absolute; width: 0px; height: 15px; background: linear-gradient(90deg, rgba(155,89,182,0), #9b59b6, #f1c40f); border-radius: 10px; box-shadow: 0 0 20px #9b59b6, 0 0 10px #f1c40f; animation: makanFly 0.4s ease-in forwards; left: 20%; bottom: 130px; transform-origin: left center; }
+        .fx-makan { position: absolute; width: 0px; height: 20px; background: linear-gradient(90deg, rgba(155,89,182,0), #9b59b6, #f1c40f); border-radius: 10px; box-shadow: 0 0 20px #9b59b6, 0 0 10px #f1c40f; animation: makanFly 0.4s ease-in forwards; left: 20%; bottom: 150px; transform-origin: left center; }
         @keyframes makanFly { 0% { width: 0px; opacity: 1; } 80% { width: 60%; opacity: 1; } 100% { width: 70%; opacity: 0; left: 30%; } }
 
-        #combo-display { position: absolute; top: 20%; left: 10%; font-size: 24px; color: #f39c12; text-shadow: 3px 3px 0 #000; display: none; transform: rotate(-10deg); z-index: 40; pointer-events: none; transition: transform 0.1s; }
-        .combo-pulse { transform: rotate(-10deg) scale(1.2) !important; color: #e74c3c !important; }
-        #buff-display { position: absolute; top: 10px; right: 10px; color: #3498db; font-size: 10px; text-shadow: 1px 1px 0 #000; z-index: 50;}
+        #combo-display { position: absolute; top: 15%; left: 10%; font-size: 36px; color: #f39c12; font-weight: 900; text-shadow: 4px 4px 0 #000; display: none; transform: rotate(-10deg); z-index: 40; pointer-events: none; transition: transform 0.1s; }
+        .combo-pulse { transform: rotate(-10deg) scale(1.3) !important; color: #e74c3c !important; }
+        #buff-display { position: absolute; top: 15px; right: 20px; color: #3498db; font-size: 14px; font-weight: bold; text-shadow: 2px 2px 0 #000; z-index: 50;}
 
-        .character-group { display: flex; align-items: flex-end; position: relative; z-index: 10; gap: 10px; }
+        /* POP-UP DE BUFF DYNAMIQUE */
+        .buff-popup { position: absolute; color: #34dbeb; font-size: 22px; font-weight: 900; text-shadow: 2px 2px 0 #000, 0 0 10px rgba(255,255,255,0.8); pointer-events: none; animation: buffAnim 1.5s ease-out forwards; z-index: 70; }
+        @keyframes buffAnim { 0% { opacity: 0; transform: translateY(20px) scale(0.5); } 20% { opacity: 1; transform: translateY(0) scale(1.2); } 80% { opacity: 1; transform: translateY(-30px) scale(1); } 100% { opacity: 0; transform: translateY(-50px) scale(0.9); } }
+
+        .character-group { display: flex; align-items: flex-end; position: relative; z-index: 10; gap: 20px; }
         .character { text-align: center; position: relative; }
         
-        #allies-field { display: flex; gap: -10px; flex-wrap: wrap-reverse; justify-content: flex-start; max-width: 180px; margin-bottom: 20px;}
+        #allies-field { display: flex; gap: 5px; flex-wrap: wrap-reverse; justify-content: flex-start; max-width: 250px; margin-bottom: 20px;}
 
-        .info-box { background: rgba(0,0,0,0.7); padding: 8px; border-radius: 5px; border: 1px solid white; margin-bottom: 10px;}
-        .hp-bar-container { width: 100%; height: 12px; background: #000; border: 1px solid #fff; margin-top: 5px; position: relative;}
-        #enemy-hp-fill { width: 100%; height: 100%; background: #2ecc71; transition: width 0.05s linear; }
+        .info-box { background: rgba(0,0,0,0.8); padding: 12px; border-radius: 8px; border: 2px solid #555; margin-bottom: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.5);}
+        #player-name, #enemy-name { font-size: 18px; font-weight: bold; margin-bottom: 5px;}
         
-        .ki-bar-container { width: 100%; height: 8px; background: #000; border: 1px solid #f1c40f; margin-top: 5px; position: relative;}
-        #ki-fill { width: 0%; height: 100%; background: #f1c40f; transition: width 0.1s; box-shadow: 0 0 10px #f1c40f;}
+        .hp-bar-container { width: 100%; height: 18px; background: #222; border: 2px solid #fff; border-radius: 10px; overflow: hidden; margin-top: 8px; position: relative;}
+        #enemy-hp-fill { width: 100%; height: 100%; background: linear-gradient(90deg, #27ae60, #2ecc71); transition: width 0.05s linear; }
+        
+        .ki-bar-container { width: 100%; height: 12px; background: #222; border: 2px solid #f1c40f; border-radius: 6px; overflow: hidden; margin-top: 8px; position: relative;}
+        #ki-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #f39c12, #f1c40f); transition: width 0.1s; box-shadow: 0 0 10px #f1c40f;}
 
-        #level-display { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); padding: 10px; border: 2px solid #f1c40f; color: #f1c40f; z-index: 5; font-size: 10px; text-align: center; line-height: 1.5; width: 300px;}
-        #boss-timer { color: #e74c3c; font-size: 14px; display: none; margin-top: 5px; animation: pulseRed 1s infinite;}
+        #level-display { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); padding: 15px 30px; border-radius: 10px; border: 2px solid #f1c40f; color: #f1c40f; z-index: 5; font-size: 16px; font-weight: bold; text-align: center; line-height: 1.5; box-shadow: 0 5px 15px rgba(0,0,0,0.5);}
+        #boss-timer { color: #e74c3c; font-size: 20px; display: none; margin-top: 5px; animation: pulseRed 1s infinite;}
         
         @keyframes pulseRed { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         .shake-hard { animation: shakeScreen 0.2s; }
         @keyframes shakeScreen { 0%, 100% { transform: translate(0, 0); } 20% { transform: translate(-10px, 5px); } 40% { transform: translate(10px, -5px); } 60% { transform: translate(-10px, -5px); } 80% { transform: translate(10px, 5px); } }
 
-        .modal { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-        .modal-content { background: #222; border: 4px solid #f39c12; padding: 20px; max-width: 500px; }
-        .wish-btn { background: #27ae60; border: 4px solid #2ecc71; color: white; font-family: inherit; font-size: 10px; padding: 15px; margin: 10px; cursor: pointer; width: 90%; }
-        .wish-btn:hover { background: #2ecc71; }
-        .senzu-btn { background: #2ecc71; border-color: #27ae60; color: #000; }
-        .time-btn { background: #8e44ad; border: 4px solid #9b59b6; font-size: 12px; }
+        .modal { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); z-index: 100; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .modal-content { background: #1a1a1a; border: 4px solid #f39c12; padding: 30px; border-radius: 15px; max-width: 600px; width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.8);}
+        .wish-btn { background: #27ae60; border: none; border-radius: 8px; color: white; font-family: inherit; font-size: 16px; font-weight: bold; padding: 15px 20px; margin: 10px; cursor: pointer; width: 90%; transition: 0.2s;}
+        .wish-btn:hover { background: #2ecc71; transform: scale(1.02);}
+        .senzu-btn { background: #2ecc71; color: #000; }
+        .time-btn { background: #8e44ad; }
 
-        #shop-controls { background: #111; border-bottom: 2px solid #333; padding: 5px 10px; display: flex; justify-content: flex-end; align-items: center;}
-        #multi-buy-btn { background: #34495e; border: 2px solid #2c3e50; color: #fff; font-family: inherit; font-size: 8px; padding: 5px 10px; cursor: pointer; }
+        #shop-controls { background: #111; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #333;}
+        #multi-buy-btn { background: #34495e; border: none; border-radius: 5px; color: #fff; font-family: inherit; font-size: 14px; font-weight: bold; padding: 8px 15px; cursor: pointer; }
         
-        #ui-bottom { background: #111; flex: 1; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 2px; overflow-y: auto;}
-        .shop-panel { padding: 8px; background: #1a1a1a; border-right: 2px solid #333;}
-        .shop-panel h3 { text-align: center; font-size: 8px; color: #f1c40f; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        #tabs-container { display: flex; background: #0a0a0a; overflow-x: auto; border-bottom: 3px solid #e67e22; scrollbar-width: none; }
+        #tabs-container::-webkit-scrollbar { display: none; }
+        .tab-btn { flex: 1; min-width: 120px; padding: 15px 10px; background: transparent; border: none; color: #aaa; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.3s; border-right: 1px solid #222; }
+        .tab-btn:hover { background: #222; color: #fff; }
+        .tab-btn.active { background: #e67e22; color: #fff; text-shadow: 1px 1px 2px #000; box-shadow: inset 0 -4px 0 #d35400; }
 
-        button.shop-btn { background: #2c3e50; border: 2px solid #34495e; color: white; font-family: inherit; font-size: 7px; padding: 8px; width: 100%; margin-bottom: 5px; cursor: pointer; text-align: left; line-height: 1.4; }
-        button.shop-btn:hover { background: #34495e; }
-        button.shop-btn:disabled { background: #111; color: #555; cursor: not-allowed; border-color: #333;}
-        .price { float: right; color: #f1c40f; font-weight: bold; }
-        .price-medal { float: right; color: #9b59b6; font-weight: bold; }
+        #ui-bottom { height: 35vh; background: #151515; overflow-y: auto; padding: 15px; box-sizing: border-box;}
         
-        .assist-btn { background: #2980b9 !important; border-color: #3498db !important; text-align: center !important;}
-        .gacha-btn { background: #c0392b !important; border-color: #e74c3c !important; text-align: center !important; font-size: 8px !important; padding: 10px !important;}
-        .transform-btn { background: #f1c40f !important; color: #000 !important; border-color: #fff !important; font-size: 8px !important; text-align: center !important; animation: pulseRed 0.5s infinite; }
-        .prestige-btn { background: #8e44ad !important; border-color: #9b59b6 !important; text-align: center !important; font-size: 8px !important; padding: 10px !important; }
+        .tab-panel { display: none; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; align-content: start; }
+        .tab-panel.active { display: grid; }
 
-        .rarity-R { color: #bdc3c7; }
-        .rarity-SR { color: #3498db; }
-        .rarity-SSR { color: #f1c40f; text-shadow: 0 0 5px #e67e22; }
-        .rarity-LR { color: #e74c3c; text-shadow: 0 0 10px #c0392b; font-weight: bold; }
+        button.shop-btn { background: #2c3e50; border: none; border-radius: 8px; color: white; font-family: inherit; font-size: 13px; padding: 12px; width: 100%; cursor: pointer; text-align: left; line-height: 1.5; transition: 0.2s; position: relative;}
+        button.shop-btn:hover:not(:disabled) { background: #34495e; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.3);}
+        button.shop-btn:disabled { background: #1a1a1a; color: #555; cursor: not-allowed;}
+        .price { float: right; color: #f1c40f; font-weight: bold; font-size: 14px;}
+        .price-medal { float: right; color: #9b59b6; font-weight: bold; font-size: 14px;}
+        
+        .assist-btn { background: #2980b9 !important; text-align: center !important; margin-top: 5px;}
+        .gacha-btn { background: #c0392b !important; text-align: center !important; font-size: 16px !important; padding: 20px !important;}
+        .transform-btn { background: linear-gradient(45deg, #f1c40f, #f39c12) !important; color: #000 !important; font-size: 16px !important; font-weight: bold; text-align: center !important; animation: pulseRed 0.5s infinite; }
+        .prestige-btn { background: #8e44ad !important; text-align: center !important; font-size: 16px !important; padding: 20px !important; }
 
         .anim-attack { animation: dash 0.1s ease-in-out 2 alternate; }
         @keyframes dash { 0% { transform: translateX(0); } 100% { transform: translateX(50px); } }
-        .anim-hit { filter: brightness(2) drop-shadow(0 0 10px red); transform: translateX(10px); }
         
-        .damage-popup { position: absolute; color: #e74c3c; font-size: 14px; font-weight: bold; text-shadow: 2px 2px 0 #000; pointer-events: none; animation: floatUp 0.8s forwards; z-index: 20; }
-        .crit-popup { color: #f1c40f; font-size: 24px; filter: drop-shadow(0 0 5px #e67e22); z-index: 30; }
-        .dps-popup { position: absolute; color: #bdc3c7; font-size: 9px; font-weight: bold; text-shadow: 1px 1px 0 #000; pointer-events: none; animation: floatUp 0.6s forwards; z-index: 15; opacity: 0.7;}
-        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-80px); } }
+        .anim-hit { transform: translateX(10px) rotate(2deg); }
         
-        .equip-item { font-size: 7px; line-height: 1.6; margin-bottom: 5px; background: #000; padding: 5px; border: 1px solid #333; border-radius: 4px; text-align: left;}
-        .equip-icon { font-size: 12px; margin-right: 5px;}
+        .damage-popup { position: absolute; color: #e74c3c; font-size: 24px; font-weight: 900; text-shadow: 2px 2px 0 #000, -1px -1px 0 #fff; pointer-events: none; animation: floatUp 0.8s forwards; z-index: 20; }
+        .crit-popup { color: #f1c40f; font-size: 36px; filter: drop-shadow(0 0 8px #e67e22); z-index: 30; }
+        .dps-popup { position: absolute; color: #bdc3c7; font-size: 14px; font-weight: bold; text-shadow: 1px 1px 0 #000; pointer-events: none; animation: floatUp 0.6s forwards; z-index: 15; opacity: 0.8;}
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-100px) scale(1.2); } }
+        
+        .equip-item { font-size: 13px; line-height: 1.6; background: #111; padding: 12px; border: 1px solid #333; border-radius: 8px; text-align: left; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);}
+        .equip-icon { font-size: 18px; margin-right: 8px; vertical-align: middle;}
     </style>
 </head>
 <body>
 
 <div id="shenron-modal" class="modal">
     <div id="shenron-img"><img src="Shenron.png" class="asset-img" onerror="this.src=''; this.alt='🐉'; this.style.fontSize='120px';"></div>
-    <div style="color: #2ecc71; font-size: 14px; margin-bottom: 20px; text-shadow: 2px 2px #000;">"JE SUIS SHENRON. QUEL EST TON VŒU ?"</div>
+    <div style="color: #2ecc71; font-size: 20px; font-weight: bold; margin-bottom: 20px; text-shadow: 2px 2px #000;">"JE SUIS SHENRON. QUEL EST TON VŒU ?"</div>
     <button class="wish-btn" onclick="grantWish('zeni')">La Richesse (Zeni x100 instantané)</button>
     <button class="wish-btn" onclick="grantWish('power')">Le Pouvoir (Puissance x3 permanent)</button>
     <button class="wish-btn" onclick="grantWish('senzu')">Survivre (5 Senzus gratuits)</button>
@@ -123,9 +138,9 @@
 
 <div id="prestige-modal" class="modal">
     <div class="modal-content">
-        <h2 style="color: #9b59b6;">MACHINE À VOYAGER DANS LE TEMPS</h2>
-        <p style="font-size: 10px; line-height: 1.5;">Retournez dans le passé pour corriger l'histoire. Vous perdrez vos Zeni, vos clics et vos alliés classiques, mais gagnerez de l'<b>Énergie Temporelle</b> qui boostera toutes vos statistiques de façon exponentielle.</p>
-        <p>Gain potentiel : <span id="prestige-gain-display" style="color: #3498db; font-size: 14px;">0</span> Énergie(s)</p>
+        <h2 style="color: #9b59b6; margin-top:0;">MACHINE À VOYAGER DANS LE TEMPS</h2>
+        <p style="font-size: 14px; line-height: 1.6;">Retournez dans le passé pour corriger l'histoire. Vous perdrez vos Zeni, vos clics et vos alliés classiques, mais gagnerez de l'<b>Énergie Temporelle</b> qui boostera toutes vos statistiques de façon exponentielle.</p>
+        <p style="font-weight: bold; margin: 20px 0;">Gain potentiel : <span id="prestige-gain-display" style="color: #3498db; font-size: 24px;">0</span> Énergie(s)</p>
         <button class="wish-btn time-btn" onclick="executePrestige()">VOYAGER DANS LE TEMPS</button>
         <button class="wish-btn" style="background: #e74c3c;" onclick="document.getElementById('prestige-modal').style.display='none'">Annuler</button>
     </div>
@@ -133,33 +148,33 @@
 
 <div id="senzu-modal" class="modal">
     <div class="modal-content">
-        <h2>DEFAITE IMMINENTE...</h2>
+        <h2 style="color:#e74c3c; margin-top:0;">DEFAITE IMMINENTE...</h2>
         <p>Le temps est écoulé. Voulez-vous utiliser un Senzu ?</p>
-        <p>Senzus restants: <span id="senzu-modal-count">0</span> 🫘</p>
+        <p style="font-size: 20px; font-weight: bold;">Senzus restants: <span id="senzu-modal-count">0</span> 🫘</p>
         <button class="wish-btn senzu-btn" onclick="useSenzu()">MANGER UN SENZU</button>
-        <button class="wish-btn" style="background:#e74c3c;" onclick="acceptDefeat()">Accepter la défaite</button>
+        <button class="wish-btn" style="background:#555;" onclick="acceptDefeat()">Accepter la défaite</button>
     </div>
 </div>
 
 <div id="gacha-modal" class="modal">
     <div class="modal-content">
-        <h2>INVOCATION CAPSULE CORP</h2>
-        <div id="gacha-result-text" style="font-size: 12px; margin: 20px; line-height: 1.5; text-align: center;"></div>
+        <h2 style="color:#f1c40f; margin-top:0;">INVOCATION CAPSULE CORP</h2>
+        <div id="gacha-result-text" style="font-size: 18px; font-weight: bold; margin: 30px; line-height: 1.5; text-align: center;"></div>
         <button class="wish-btn" onclick="document.getElementById('gacha-modal').style.display='none'">Super !</button>
     </div>
 </div>
 
 <div id="offline-modal" class="modal">
     <div class="modal-content">
-        <h2 style="color: #3498db;">ENTRAÎNEMENT TERMINÉ</h2>
-        <p style="font-size: 10px; line-height: 1.5; margin: 20px 0;">Pendant ton absence (<span id="offline-time" style="color:#f1c40f;"></span>), tes alliés ont continué à combattre sans relâche !</p>
-        <p style="color: #2ecc71; font-size: 14px; font-weight: bold; margin-bottom: 20px;">Gains : +<span id="offline-zeni"></span> Zeni</p>
+        <h2 style="color: #3498db; margin-top:0;">ENTRAÎNEMENT TERMINÉ</h2>
+        <p style="font-size: 16px; line-height: 1.5; margin: 20px 0;">Pendant ton absence (<span id="offline-time" style="color:#f1c40f; font-weight:bold;"></span>), tes alliés ont continué à combattre sans relâche !</p>
+        <p style="color: #2ecc71; font-size: 24px; font-weight: bold; margin-bottom: 30px;">Gains : +<span id="offline-zeni"></span> Zeni</p>
         <button class="wish-btn" onclick="document.getElementById('offline-modal').style.display='none'">Récupérer</button>
     </div>
 </div>
 
 <div id="golden-saibaman" onclick="catchSaibaman()">
-    <img src="Saibaman_Dore.png" class="asset-img" onerror="this.src=''; this.alt='🧌'; this.style.fontSize='50px';">
+    <img src="Saibaman_Dore.png" class="asset-img" onerror="this.src=''; this.alt='🧌'; this.style.fontSize='80px';">
 </div>
 <div id="hoi-poi-capsule" onclick="catchCapsule()">💊</div>
 
@@ -170,7 +185,7 @@
         <div class="senzu">Senzu: <span id="senzu-display">0</span> 🫘</div>
         <div class="time-energy">Énergie T.: <span id="time-display">0</span> ⏳</div>
         <div class="dragon-balls">DB: <span id="db-display">0</span>/7 🟠</div>
-        <div>
+        <div style="text-align: right;">
             <div id="power-level-container">Puissance: <span id="dps-display">0</span></div>
             <div id="title-container">Titre : Novice</div>
         </div>
@@ -185,7 +200,7 @@
             <div id="boss-ui-container"></div>
         </div>
         
-        <div id="combo-display"><span id="combo-count">0</span> HITS!<br><span style="font-size:10px; color:#fff;" id="combo-multi">x1.0</span></div>
+        <div id="combo-display"><span id="combo-count">0</span> HITS!<br><span style="font-size:16px; color:#fff;" id="combo-multi">x1.0</span></div>
 
         <div class="character-group">
             <div id="allies-field"></div>
@@ -193,46 +208,67 @@
             <div class="character" id="player">
                 <div class="info-box">
                     <div id="player-name">Goku</div>
-                    <div id="player-form" style="font-size: 7px; color: #f1c40f;">Forme de base</div>
+                    <div id="player-form" style="font-size: 11px; color: #f1c40f; font-weight: bold;">Forme de base</div>
                     <div class="ki-bar-container"><div id="ki-fill"></div></div>
                 </div>
                 <div id="player-sprite" class="sprite">
-                    <img src="Goku_Base.png" class="asset-img" onerror="this.src=''; this.alt='👦🏻'; this.style.fontSize='80px';">
+                    <img src="Goku_Base.png" class="asset-img" onerror="this.src=''; this.alt='👦🏻'; this.style.fontSize='100px';">
                 </div>
             </div>
         </div>
 
         <div class="character" id="enemy">
-            <div class="info-box"><div id="enemy-name">Sbire</div>
-            <div class="hp-bar-container"><div id="enemy-hp-fill"></div></div>
-            <div style="font-size: 7px; margin-top: 5px;">HP: <span id="enemy-hp-text">100</span></div>
+            <div class="info-box">
+                <div id="enemy-name">Sbire</div>
+                <div class="hp-bar-container"><div id="enemy-hp-fill"></div></div>
+                <div style="font-size: 11px; margin-top: 5px; color: #ccc;">HP: <span id="enemy-hp-text">100</span></div>
             </div>
             <div id="enemy-sprite" class="sprite" onclick="playerClick(event)">
-                <img src="Yamcha.png" class="asset-img" onerror="this.src=''; this.alt='🥷'; this.style.fontSize='100px';">
+                <img src="Yamcha.png" class="asset-img" onerror="this.src=''; this.alt='🥷'; this.style.fontSize='120px';">
             </div>
         </div>
     </div>
 
+    <div id="tabs-container">
+        <button class="tab-btn active" onclick="switchTab('training-shop', this)">🏋️ Entraînement</button>
+        <button class="tab-btn" onclick="switchTab('allies-shop', this)">👥 Soutien</button>
+        <button class="tab-btn" onclick="switchTab('skills-shop', this)">🌳 Talents</button>
+        <button class="tab-btn" onclick="switchTab('quests-shop', this)">📜 Quêtes</button>
+        <button class="tab-btn" onclick="switchTab('equip-shop', this)">🎒 Sac</button>
+        <button class="tab-btn" onclick="switchTab('gacha-shop', this)">🎰 Gacha</button>
+        <button class="tab-btn" onclick="switchTab('arena-shop', this)">🏟️ Tournoi</button>
+        <button class="tab-btn" onclick="switchTab('forms-shop', this)">✨ Éveil de Ki</button>
+        <button class="tab-btn" onclick="switchTab('capsule-shop', this)">🪐 Voyage</button>
+    </div>
+
     <div id="shop-controls">
+        <div style="color: #aaa; font-size: 14px; font-weight: bold;">Menu des Améliorations</div>
         <button id="multi-buy-btn" onclick="toggleMultiBuy()">Acheter : x1</button>
     </div>
+
     <div id="ui-bottom">
-        <div class="shop-panel" id="training-shop"><h3>🏋️ Entraînement</h3></div>
-        <div class="shop-panel" id="allies-shop"><h3>👥 Soutien</h3></div>
-        <div class="shop-panel" id="skills-shop"><h3>🌳 Talents</h3></div>
-        <div class="shop-panel" id="quests-shop"><h3>📜 Quêtes</h3></div>
-        <div class="shop-panel" id="equip-shop"><h3>🎒 Sac</h3></div>
-        <div class="shop-panel" id="gacha-shop"><h3>🎰 Gacha</h3></div>
-        <div class="shop-panel" id="arena-shop"><h3>🏟️ Tournoi</h3></div>
-        <div class="shop-panel" id="forms-shop"><h3>✨ Éveil de Ki</h3></div>
-        <div class="shop-panel" id="capsule-shop">
-            <h3>🪐 Voyage</h3>
-            <button class="shop-btn prestige-btn" onclick="openPrestigeMenu()">Machine Trunks ⏳</button>
+        <div class="tab-panel active" id="training-shop"></div>
+        <div class="tab-panel" id="allies-shop"></div>
+        <div class="tab-panel" id="skills-shop"></div>
+        <div class="tab-panel" id="quests-shop"></div>
+        <div class="tab-panel" id="equip-shop"></div>
+        <div class="tab-panel" id="gacha-shop"></div>
+        <div class="tab-panel" id="arena-shop"></div>
+        <div class="tab-panel" id="forms-shop"></div>
+        <div class="tab-panel" id="capsule-shop">
+            <button class="shop-btn prestige-btn" onclick="openPrestigeMenu()">Machine de Trunks ⏳<br><span style="font-size:12px; font-weight:normal; display:block; margin-top:5px;">Réinitialiser pour gagner de l'Énergie Temporelle</span></button>
         </div>
     </div>
 </div>
 
 <script>
+    function switchTab(tabId, btnElement) {
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        btnElement.classList.add('active');
+    }
+
     function formatNumber(num) {
         if(num >= 1e12) return (num/1e12).toFixed(2) + "T";
         if(num >= 1e9) return (num/1e9).toFixed(2) + "B";
@@ -314,34 +350,22 @@
         setInterval(saveGame, 5000);
         setInterval(trySpawnSaibaman, 20000);
         setInterval(trySpawnCapsule, 35000);
+        setInterval(spawnAllyBlast, 500); // Animation tir des alliés toutes les 0.5s
     }
 
     function saveGame() { 
         game.lastSaveTime = Date.now();
-        localStorage.setItem('dbzClickerSave_v21', JSON.stringify(game)); 
+        localStorage.setItem('dbzClickerSave_v23', JSON.stringify(game)); 
     }
     
     function loadGame() {
-        let saved = localStorage.getItem('dbzClickerSave_v21');
+        let saved = localStorage.getItem('dbzClickerSave_v23') || localStorage.getItem('dbzClickerSave_v22') || localStorage.getItem('dbzClickerSave_v21');
         if (saved) {
             Object.assign(game, JSON.parse(saved));
             game.state = 'farm'; game.burstMode = { active: false, timeLeft: 0, currentForm: null, isOverdrive: false }; game.ki = 0; game.combo = 0;
             if(!game.zenkaiMulti) game.zenkaiMulti = 1;
             if(!game.stats) game.stats = { totalClicks: 0, kills: 0 };
             if(!game.equip) game.equip = { scouter: 0, poids: 0, armure: 0, epee: 0 };
-            
-            // Intégration rétroactive des nouvelles données
-            if(!game.quests) game.quests = [
-                { text: "Faire 100 Clics", target: 100, type: "clicks", rewardTxt: "1 🏅", rewardType: "medals", rewardAmt: 1, done: false },
-                { text: "Tuer 50 Ennemis", target: 50, type: "kills", rewardTxt: "2 🏅", rewardType: "medals", rewardAmt: 2, done: false },
-                { text: "Atteindre Nv.50", target: 50, type: "level", rewardTxt: "5 ⏳", rewardType: "time", rewardAmt: 5, done: false }
-            ];
-            if(!game.skills) game.skills = [
-                { name: "Voie du Zeni", desc: "+10% Zeni", cost: 1, max: 10, level: 0 },
-                { name: "Frappe Brutale", desc: "+20% Dégâts", cost: 2, max: 10, level: 0 },
-                { name: "Maître Critique", desc: "+1% Crit", cost: 3, max: 5, level: 0 }
-            ];
-
             game.allies.forEach(a => a.assistCd = 0); 
             
             let now = Date.now();
@@ -419,6 +443,17 @@
         showDamagePopup(window.innerWidth/2, 300, "VOYAGE DANS LE TEMPS RÉUSSI !", true);
     }
 
+    // ANIMATION TIRS DES ALLIES
+    function spawnAllyBlast() {
+        if (getTotalDps() <= 0 || currentEnemy.hp <= 0 || stunTimer > 0) return;
+        let blast = document.createElement('div');
+        blast.className = 'ally-blast';
+        blast.style.left = (10 + Math.random() * 20) + 'vw';
+        blast.style.bottom = (100 + Math.random() * 150) + 'px';
+        document.getElementById('fx-layer').appendChild(blast);
+        setTimeout(() => blast.remove(), 300);
+    }
+
     function fastLoop() {
         let modalsOpen = document.querySelectorAll('.modal');
         for(let m of modalsOpen) { if(m.style.display === "flex") return; }
@@ -489,7 +524,7 @@
         let char = game.gachaBox.find(c => c.id === targetId); char.count++;
         
         document.getElementById('gacha-result-text').innerHTML = `
-            <div style="width:100px; height:100px; margin: 0 auto 10px auto; filter: drop-shadow(0 0 10px #f1c40f);">
+            <div style="width:150px; height:150px; margin: 0 auto 20px auto; filter: drop-shadow(0 0 15px #f1c40f);">
                 ${char.sprite}
             </div>
             Tu as obtenu <span class="rarity-${char.rarity}">${char.name} (${char.rarity})</span> !<br>+${formatNumber(char.power)} de Puissance.
@@ -528,12 +563,25 @@
         let pos = -50;
         let fallInt = setInterval(() => { pos += 3; cap.style.top = pos + "px"; if (pos > window.innerHeight) { clearInterval(fallInt); cap.style.display = "none"; } }, 30);
     }
+
+    // NOUVEAU POP-UP DE BUFF DYNAMIQUE
+    function showBuffPopup(text) {
+        let p = document.createElement('div');
+        p.className = 'buff-popup';
+        p.innerText = text;
+        let playerBox = document.getElementById('player').getBoundingClientRect();
+        p.style.left = playerBox.left + 'px';
+        p.style.top = (playerBox.top - 80) + 'px';
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 1500);
+    }
+
     function catchCapsule() {
         document.getElementById('hoi-poi-capsule').style.display = "none";
         let buffs = ['Dégâts x2', 'Zeni x2', 'Ki Max'];
         let choice = buffs[Math.floor(Math.random() * buffs.length)];
-        if (choice === 'Ki Max') { game.ki = 200; showDamagePopup(window.innerWidth/2, 200, "KI REMPLI À 200% !", true); } 
-        else { activeBuff = { type: choice, timer: 15 }; showDamagePopup(window.innerWidth/2, 200, choice + " (15s)", true); }
+        if (choice === 'Ki Max') { game.ki = 200; showBuffPopup("⚡ KI REMPLI !"); } 
+        else { activeBuff = { type: choice, timer: 15 }; showBuffPopup("✨ " + choice + " !"); }
         renderShop();
     }
 
@@ -546,7 +594,7 @@
         if (game.burstMode.active && game.burstMode.isOverdrive) base *= 2; 
         if (activeBuff.type === 'Dégâts x2') base *= 2; 
         base *= (1 + (game.equip.armure * 0.20)); 
-        base *= (1 + (game.skills[1].level * 0.20)); // TALENT : Dégâts
+        base *= (1 + (game.skills[1].level * 0.20)); 
         return base; 
     }
     
@@ -561,7 +609,7 @@
 
     function getCritChance() {
         let pl = getTotalDps(); let baseCrit = 0.05 + (game.combo * 0.005) + (game.equip.scouter * 0.02); 
-        baseCrit += (game.skills[2].level * 0.01); // TALENT : Critique
+        baseCrit += (game.skills[2].level * 0.01); 
         if (pl > 100000000) return baseCrit + 0.20;
         if (pl > 1000000) return baseCrit + 0.10;
         return baseCrit > 1 ? 1 : baseCrit;
@@ -571,7 +619,7 @@
         let now = Date.now();
         if (now - game.lastClickTime < 1000) game.combo++; else game.combo = 1;
         game.lastClickTime = now;
-        game.stats.totalClicks++; // QUETE STAT
+        game.stats.totalClicks++; 
         
         let cDisplay = document.getElementById('combo-display'); cDisplay.style.display = "block";
         document.getElementById('combo-count').innerText = game.combo; document.getElementById('combo-multi').innerText = "x" + getComboMulti().toFixed(2);
@@ -607,19 +655,19 @@
             game.state = 'boss'; currentEnemy.maxHp = Math.floor(era.hpBase * hpMulti * 20); currentEnemy.reward = Math.floor(era.rewardBase * hpMulti * 30); currentEnemy.armor = true; 
             document.getElementById('enemy-name').innerText = era.boss + " (BOSS)"; 
             document.getElementById('enemy-sprite').innerHTML = `<img src="${era.bossSprite}" class="asset-img" onerror="this.src=\'\'; this.alt=\'👺\';">`; 
-            document.getElementById('enemy-hp-fill').style.background = "#e74c3c";
+            document.getElementById('enemy-hp-fill').style.background = "linear-gradient(90deg, #c0392b, #e74c3c)";
             bossTimerLeft = 30; document.getElementById('boss-timer').style.display = 'block'; document.getElementById('timer-text').innerText = bossTimerLeft;
         } else if (game.level % 10 === 0) {
             game.state = 'miniboss'; currentEnemy.maxHp = Math.floor(era.hpBase * hpMulti * 5); currentEnemy.reward = Math.floor(era.rewardBase * hpMulti * 5); currentEnemy.armor = true; 
             document.getElementById('enemy-name').innerText = era.miniboss + " (MINI-BOSS)"; 
             document.getElementById('enemy-sprite').innerHTML = `<img src="${era.minibossSprite}" class="asset-img" onerror="this.src=\'\'; this.alt=\'🦹\';">`; 
-            document.getElementById('enemy-hp-fill').style.background = "#e67e22"; document.getElementById('boss-timer').style.display = 'none';
+            document.getElementById('enemy-hp-fill').style.background = "linear-gradient(90deg, #d35400, #e67e22)"; document.getElementById('boss-timer').style.display = 'none';
         } else {
             game.state = 'farm'; currentEnemy.maxHp = Math.floor(era.hpBase * hpMulti); currentEnemy.reward = Math.floor(era.rewardBase * hpMulti);
             let grunt = era.grunts[Math.floor(Math.random() * era.grunts.length)];
             document.getElementById('enemy-name').innerText = grunt.name; 
             document.getElementById('enemy-sprite').innerHTML = `<img src="${grunt.img}" class="asset-img" onerror="this.src=\'\'; this.alt=\'🥷\';">`; 
-            document.getElementById('enemy-hp-fill').style.background = "#2ecc71"; document.getElementById('boss-timer').style.display = 'none';
+            document.getElementById('enemy-hp-fill').style.background = "linear-gradient(90deg, #27ae60, #2ecc71)"; document.getElementById('boss-timer').style.display = 'none';
         }
         
         currentEnemy.hp = currentEnemy.maxHp; 
@@ -628,7 +676,7 @@
         document.getElementById('level-text').innerText = game.level + "/100";
         
         let ui = document.getElementById('boss-ui-container');
-        if (game.state === 'boss') ui.innerHTML = `<button id="btn-flee" onclick="acceptDefeat()">Fuir le combat</button>`; else ui.innerHTML = "";
+        if (game.state === 'boss') ui.innerHTML = `<button style="background:#c0392b; color:#fff; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-weight:bold; margin-top:10px;" onclick="acceptDefeat()">Fuir le combat</button>`; else ui.innerHTML = "";
         updateEnemyUI();
     }
 
@@ -656,16 +704,16 @@
     }
 
     function enemyDefeated() {
-        game.stats.kills++; // QUETE STAT
+        game.stats.kills++; 
         
         let gain = currentEnemy.reward * getPrestigeMulti();
         if (activeBuff.type === 'Zeni x2') gain *= 2;
         gain *= (1 + (game.equip.poids * 0.10)); 
-        gain *= (1 + (game.skills[0].level * 0.10)); // TALENT : Zeni
+        gain *= (1 + (game.skills[0].level * 0.10)); 
         game.zeni += gain;
         
         let enemyRect = document.getElementById('enemy-sprite').getBoundingClientRect();
-        showDamagePopup(enemyRect.left + 50, enemyRect.top, "+" + formatNumber(gain) + " 💰", false);
+        showDamagePopup(enemyRect.left + 80, enemyRect.top, "+" + formatNumber(gain) + " 💰", false);
 
         if (Math.random() < 0.01) { game.senzus++; updateUI();}
         rollEquipmentDrop(); 
@@ -711,7 +759,7 @@
     function activateBurst(index) {
         if (game.ki < 100) return; let isOverdrive = game.ki >= 200; let form = game.forms[index]; 
         game.burstMode = { active: true, timeLeft: isOverdrive ? 30 : 15, currentForm: form, isOverdrive: isOverdrive }; game.ki = 0;
-        let ps = document.getElementById('player-sprite'); ps.innerHTML = form.sprite; ps.style.filter = `drop-shadow(0 0 30px ${form.color}) brightness(1.8)`; 
+        let ps = document.getElementById('player-sprite'); ps.innerHTML = form.sprite; ps.style.filter = `drop-shadow(0 0 30px ${form.color}) brightness(1.5)`; 
         document.getElementById('player-form').innerText = form.name + (isOverdrive ? " [OVERDRIVE]" : " [BURST]"); renderShop(); updateUI();
     }
 
@@ -722,7 +770,6 @@
         if (q.rewardType === 'time') game.timeEnergy += q.rewardAmt;
         q.done = true;
         
-        // Génère la quête suivante (logique simple infinie)
         if (q.type === 'clicks') q.target += 500;
         if (q.type === 'kills') q.target += 200;
         if (q.type === 'level') q.target += 50;
@@ -737,7 +784,7 @@
         if (game.medals >= s.cost && s.level < s.max) {
             game.medals -= s.cost;
             s.level++;
-            s.cost += 1; // Augmente le prix
+            s.cost += 1; 
             updateUI(); renderShop();
         }
     }
@@ -754,61 +801,61 @@
         
         let clickInfo = getMultiBuyDetails(baseClickCost, 1.5, game.clickUpgrades, game.zeni, req);
         let clickDisplayAmt = req === 'MAX' ? clickInfo.count : req;
-        let clickBtnTxt = clickDisplayAmt > 0 ? `Pompes (+${clickDisplayAmt}) <span class="price">${formatNumber(clickInfo.totalCost)}</span>` : `Pompes <span class="price">Fonds Insuffisants</span>`;
+        let clickBtnTxt = clickDisplayAmt > 0 ? `Pompes (+${clickDisplayAmt}) <br><span class="price">${formatNumber(clickInfo.totalCost)}</span>` : `Pompes <span class="price">Fonds Insuffisants</span>`;
         
-        document.getElementById('training-shop').innerHTML = `<h3>🏋️ Entraînement</h3><button class="shop-btn" ${clickInfo.count === 0 ? "disabled" : ""} onclick="buyClick()">${clickBtnTxt}</button>`;
+        document.getElementById('training-shop').innerHTML = `<button class="shop-btn" ${clickInfo.count === 0 ? "disabled" : ""} onclick="buyClick()"><strong>Entraînement de base</strong><br><span style="color:#aaa;">Puissance du clic</span><br>${clickBtnTxt}</button>`;
 
-        document.getElementById('allies-shop').innerHTML = `<h3>👥 Soutien</h3>` + game.allies.map((a,i) => {
+        document.getElementById('allies-shop').innerHTML = game.allies.map((a,i) => {
             if (game.eraIndex < a.unlockEra) return ""; 
             let aInfo = getMultiBuyDetails(a.baseCost, 1.2, a.count, game.zeni, req);
             let aDisplayAmt = req === 'MAX' ? aInfo.count : req;
-            let aBtnTxt = aDisplayAmt > 0 ? `Acheter (+${aDisplayAmt})<span class="price">${formatNumber(aInfo.totalCost)}</span>` : `Fonds Insuffisants`;
+            let aBtnTxt = aDisplayAmt > 0 ? `Acheter (+${aDisplayAmt})<br><span class="price">${formatNumber(aInfo.totalCost)}</span>` : `Fonds Insuffisants`;
 
-            let html = `<div style="font-size:7px; margin-bottom: 2px;">${a.name} (Nv.${a.count}) <br>DPS: ${formatNumber(a.dps * a.count)}</div>`;
+            let html = `<div style="background:#111; padding:10px; border-radius:8px; border:1px solid #333;"><div style="font-size:14px; font-weight:bold; margin-bottom: 5px; color:#3498db;">${a.name} (Nv.${a.count})</div><div style="font-size:12px; margin-bottom:10px;">DPS: ${formatNumber(a.dps * a.count)}</div>`;
             html += `<button class="shop-btn" ${aInfo.count === 0 ? "disabled" : ""} onclick="buyAlly(${i})">${aBtnTxt}</button>`;
-            if (a.count > 0) html += `<button class="shop-btn assist-btn" ${a.assistCd > 0 ? "disabled" : ""} onclick="useAssist(${i})">${a.assist} <span class="price">${a.assistCd > 0 ? a.assistCd + 's' : 'PRÊT'}</span></button>`;
-            return html + `<div style="height:5px;"></div>`;
+            if (a.count > 0) html += `<button class="shop-btn assist-btn" ${a.assistCd > 0 ? "disabled" : ""} onclick="useAssist(${i})">Attaque Spéciale : ${a.assist} <span class="price">${a.assistCd > 0 ? a.assistCd + 's' : 'PRÊT'}</span></button>`;
+            return html + `</div>`;
         }).join('');
 
-        // RENDU QUETES
-        document.getElementById('quests-shop').innerHTML = `<h3>📜 Quêtes</h3>` + game.quests.map((q, i) => {
+        document.getElementById('quests-shop').innerHTML = game.quests.map((q, i) => {
             let progress = 0;
             if (q.type === 'clicks') progress = game.stats.totalClicks;
             if (q.type === 'kills') progress = game.stats.kills;
             if (q.type === 'level') progress = game.level + (game.eraIndex * 100);
-            
             let displayProg = Math.min(progress, q.target);
             if (progress >= q.target) {
-                return `<button class="shop-btn" style="background:#27ae60; border-color:#2ecc71;" onclick="claimQuest(${i})">Récupérer<span class="price">${q.rewardTxt}</span></button>`;
+                return `<button class="shop-btn" style="background:#27ae60;" onclick="claimQuest(${i})"><strong>${q.text}</strong><br>Récupérer la récompense<span class="price" style="color:#fff;">${q.rewardTxt}</span></button>`;
             } else {
-                return `<div class="equip-item">${q.text} <br><span style="color:#f1c40f;">${displayProg}/${q.target}</span></div>`;
+                return `<div class="equip-item"><strong>${q.text}</strong><br><div style="width:100%; background:#222; height:8px; border-radius:4px; margin-top:5px; overflow:hidden;"><div style="width:${(displayProg/q.target)*100}%; background:#f1c40f; height:100%;"></div></div><span style="color:#f1c40f; font-size:11px;">${displayProg}/${q.target}</span></div>`;
             }
         }).join('');
 
-        // RENDU TALENTS
-        document.getElementById('skills-shop').innerHTML = `<h3>🌳 Talents</h3>` + game.skills.map((s, i) => {
-            if (s.level >= s.max) return `<button class="shop-btn" disabled>${s.name} (MAX)<br><span style="color:#2ecc71;">${s.desc}</span></button>`;
+        document.getElementById('skills-shop').innerHTML = game.skills.map((s, i) => {
+            if (s.level >= s.max) return `<button class="shop-btn" disabled><strong>${s.name} (MAX)</strong><br><span style="color:#2ecc71;">${s.desc}</span></button>`;
             let canBuy = game.medals >= s.cost;
-            return `<button class="shop-btn" ${!canBuy ? "disabled" : ""} onclick="buySkill(${i})">${s.name} (Nv.${s.level})<br><span style="color:#2ecc71;">${s.desc}</span><span class="price-medal">${s.cost} 🏅</span></button>`;
+            return `<button class="shop-btn" ${!canBuy ? "disabled" : ""} onclick="buySkill(${i})"><strong>${s.name} (Nv.${s.level})</strong><br><span style="color:#2ecc71;">${s.desc}</span><br><span class="price-medal">Coût : ${s.cost} 🏅</span></button>`;
         }).join('');
 
-        document.getElementById('equip-shop').innerHTML = `<h3>🎒 Sac</h3>
-            <div class="equip-item"><span class="equip-icon">🕶️</span> Scouter Nv.${game.equip.scouter} <br><span style="color:#2ecc71;">+${game.equip.scouter*2}% Crit</span></div>
-            <div class="equip-item"><span class="equip-icon">🏋️</span> Poids Nv.${game.equip.poids} <br><span style="color:#2ecc71;">+${game.equip.poids*10}% Zeni</span></div>
-            <div class="equip-item"><span class="equip-icon">🛡️</span> Armure Nv.${game.equip.armure} <br><span style="color:#2ecc71;">+${game.equip.armure*20}% Clic</span></div>
-            <div class="equip-item"><span class="equip-icon">🗡️</span> Épée Z Nv.${game.equip.epee} <br><span style="color:#2ecc71;">+${game.equip.epee*15}% DPS</span></div>
+        document.getElementById('equip-shop').innerHTML = `
+            <div class="equip-item"><span class="equip-icon">🕶️</span> <strong>Scouter</strong> Nv.${game.equip.scouter} <br><span style="color:#2ecc71;">+${game.equip.scouter*2}% de Chance de Critique</span></div>
+            <div class="equip-item"><span class="equip-icon">🏋️</span> <strong>Poids</strong> Nv.${game.equip.poids} <br><span style="color:#2ecc71;">+${game.equip.poids*10}% Zeni obtenus</span></div>
+            <div class="equip-item"><span class="equip-icon">🛡️</span> <strong>Armure</strong> Nv.${game.equip.armure} <br><span style="color:#2ecc71;">+${game.equip.armure*20}% Dégâts de Clic</span></div>
+            <div class="equip-item"><span class="equip-icon">🗡️</span> <strong>Épée Z</strong> Nv.${game.equip.epee} <br><span style="color:#2ecc71;">+${game.equip.epee*15}% Dégâts par seconde (DPS)</span></div>
         `;
 
-        document.getElementById('gacha-shop').innerHTML = `<h3>🎰 Gacha</h3><button class="shop-btn gacha-btn" ${game.medals < 1 ? "disabled" : ""} onclick="pullGacha()">Tirer Capsule<span class="price-medal">1 🏅</span></button>`;
-        document.getElementById('arena-shop').innerHTML = `<h3>🏟️ Tournoi</h3><button class="shop-btn arena-btn" ${game.medals < 2 ? "disabled" : ""} onclick="startArena()">Combattre<span class="price-medal">2 🏅</span></button><div style="font-size:7px; margin-top:5px;">Badges: ${game.arenaBadges} (+${game.arenaBadges*10}%)</div>`;
+        document.getElementById('gacha-shop').innerHTML = `<button class="shop-btn gacha-btn" ${game.medals < 1 ? "disabled" : ""} onclick="pullGacha()">Tirer une Capsule Aléatoire<br><span style="font-size:12px; font-weight:normal;">Obtenez des personnages rares</span><br><span class="price-medal" style="color:#fff; margin-top:5px;">1 🏅</span></button>`;
+        document.getElementById('arena-shop').innerHTML = `<button class="shop-btn" style="background:#c0392b; font-size:16px; padding:20px; text-align:center;" ${game.medals < 2 ? "disabled" : ""} onclick="startArena()">Lancer le Tournoi<br><span style="font-size:12px; font-weight:normal;">Gagnez 1 Badge (Boost x1.1) et des Zeni</span><br><span class="price-medal" style="color:#fff; margin-top:5px;">2 🏅</span></button><div class="equip-item" style="text-align:center; margin-top:10px;">Badges obtenus: <strong>${game.arenaBadges}</strong><br>Boost total: +${game.arenaBadges*10}%</div>`;
 
         let kiText = game.ki >= 200 ? "⚡ OVERDRIVE PRÊT ⚡" : (game.ki >= 100 ? "🔥 BURST PRÊT 🔥" : `Chargement (${Math.floor(game.ki)}%)`);
-        document.getElementById('forms-shop').innerHTML = `<h3>✨ Éveil</h3>` + game.forms.map((f,i) => {
+        
+        let formsHTML = game.forms.map((f,i) => {
             if (game.eraIndex < f.unlockEra) return "";
-            if (!f.bought) return `<button class="shop-btn" ${game.zeni < f.cost ? "disabled" : ""} onclick="if(game.zeni>=${f.cost}){game.zeni-=${f.cost}; game.forms[${i}].bought=true; renderShop(); updateUI();}">Débloquer ${f.name} <span class="price">${formatNumber(f.cost)}</span></button>`;
-            if (game.ki >= 100 && !game.burstMode.active) return `<button class="shop-btn transform-btn" onclick="activateBurst(${i})">${kiText}<br>${f.name}</button>`;
-            return `<button class="shop-btn" disabled>${f.name}</button>`;
+            if (!f.bought) return `<button class="shop-btn" ${game.zeni < f.cost ? "disabled" : ""} onclick="if(game.zeni>=${f.cost}){game.zeni-=${f.cost}; game.forms[${i}].bought=true; renderShop(); updateUI();}"><strong>Débloquer ${f.name}</strong><br><span class="price">${formatNumber(f.cost)} Zeni</span></button>`;
+            if (game.ki >= 100 && !game.burstMode.active) return `<button class="shop-btn transform-btn" onclick="activateBurst(${i})">${kiText}<br>Activer ${f.name}</button>`;
+            return `<button class="shop-btn" disabled><strong>${f.name}</strong><br>En attente de Ki...</button>`;
         }).join('');
+        
+        document.getElementById('forms-shop').innerHTML = formsHTML || `<div style="color:#aaa; font-style:italic; grid-column: 1 / -1;">Avancez dans les arcs pour débloquer des transformations.</div>`;
     }
 
     function updateUI() {
