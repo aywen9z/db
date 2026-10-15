@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- TITRE MIS À JOUR AVEC LA VERSION -->
-    <title>Dragon Ball Clicker: Édition Ultime - v23</title>
+    <title>Dragon Ball Clicker: Édition Ultime - v24</title>
     <style>
         body { margin: 0; background-color: #000; color: #fff; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; display: flex; justify-content: center; overflow: hidden; width: 100vw; height: 100vh; }
         
@@ -17,7 +16,7 @@
         .time-energy { color: #3498db; }
         
         #power-level-container { font-size: 16px; color: #e74c3c; }
-        #title-container { color: #f1c40f; font-size: 12px; margin-top: 4px;}
+        #title-container { color: #f1c40f; font-size: 12px; margin-top: 4px; cursor: pointer; }
 
         #battle-zone { 
             flex: 1; display: flex; justify-content: space-between; align-items: flex-end; 
@@ -28,8 +27,12 @@
         
         .asset-img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none; }
         
-        .sprite { margin: 0 auto; width: 180px; height: 180px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.6)); transition: transform 0.05s; display: flex; justify-content: center; align-items: flex-end; }
-        #enemy-sprite { margin: 0 auto; cursor: pointer; width: 250px; height: 250px; }
+        .sprite { width: 180px; height: 180px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.6)); transition: transform 0.05s; display: flex; justify-content: center; align-items: flex-end; }
+        
+        /* EMPLACEMENT ENNEMI FIXE ET CENTRÉ (Indépendant de la taille de l'image) */
+        #enemy-container { width: 250px; height: 250px; display: flex; justify-content: center; align-items: center; position: relative; cursor: pointer; }
+        #enemy-sprite { width: 220px; height: 220px; position: absolute; bottom: 0; }
+
         .ally-sprite { width: 90px; height: 90px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); animation: floatAlly 2s infinite ease-in-out alternate; }
         
         #golden-saibaman { display: none; position: absolute; width: 120px; height: 120px; cursor: pointer; z-index: 40; filter: drop-shadow(0 0 15px gold); }
@@ -41,8 +44,6 @@
         @keyframes floatAlly { 0% { transform: translateY(0px); } 100% { transform: translateY(-10px); } }
 
         .fx-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 60; }
-        
-        /* PROJECTILES DES ALLIÉS */
         .ally-blast { position: absolute; width: 20px; height: 10px; background: #34dbeb; border-radius: 10px; box-shadow: 0 0 10px #34dbeb, 0 0 20px #fff; animation: blastShoot 0.3s linear forwards; pointer-events: none; z-index: 55; }
         @keyframes blastShoot { 0% { opacity: 1; transform: translateX(0) scale(1); } 100% { opacity: 0; transform: translateX(40vw) scale(1.5); } }
 
@@ -55,7 +56,6 @@
         .combo-pulse { transform: rotate(-10deg) scale(1.3) !important; color: #e74c3c !important; }
         #buff-display { position: absolute; top: 15px; right: 20px; color: #3498db; font-size: 14px; font-weight: bold; text-shadow: 2px 2px 0 #000; z-index: 50;}
 
-        /* POP-UP DE BUFF DYNAMIQUE */
         .buff-popup { position: absolute; color: #34dbeb; font-size: 22px; font-weight: 900; text-shadow: 2px 2px 0 #000, 0 0 10px rgba(255,255,255,0.8); pointer-events: none; animation: buffAnim 1.5s ease-out forwards; z-index: 70; }
         @keyframes buffAnim { 0% { opacity: 0; transform: translateY(20px) scale(0.5); } 20% { opacity: 1; transform: translateY(0) scale(1.2); } 80% { opacity: 1; transform: translateY(-30px) scale(1); } 100% { opacity: 0; transform: translateY(-50px) scale(0.9); } }
 
@@ -114,7 +114,6 @@
 
         .anim-attack { animation: dash 0.1s ease-in-out 2 alternate; }
         @keyframes dash { 0% { transform: translateX(0); } 100% { transform: translateX(50px); } }
-        
         .anim-hit { transform: translateX(10px) rotate(2deg); }
         
         .damage-popup { position: absolute; color: #e74c3c; font-size: 24px; font-weight: 900; text-shadow: 2px 2px 0 #000, -1px -1px 0 #fff; pointer-events: none; animation: floatUp 0.8s forwards; z-index: 20; }
@@ -124,6 +123,8 @@
         
         .equip-item { font-size: 13px; line-height: 1.6; background: #111; padding: 12px; border: 1px solid #333; border-radius: 8px; text-align: left; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);}
         .equip-icon { font-size: 18px; margin-right: 8px; vertical-align: middle;}
+        
+        textarea.save-box { width: 100%; height: 60px; background: #000; color: #f1c40f; border: 1px solid #444; border-radius: 5px; font-family: monospace; font-size: 11px; padding: 5px; box-sizing: border-box; resize: none; margin-top: 5px;}
     </style>
 </head>
 <body>
@@ -139,10 +140,28 @@
 <div id="prestige-modal" class="modal">
     <div class="modal-content">
         <h2 style="color: #9b59b6; margin-top:0;">MACHINE À VOYAGER DANS LE TEMPS</h2>
-        <p style="font-size: 14px; line-height: 1.6;">Retournez dans le passé pour corriger l'histoire. Vous perdrez vos Zeni, vos clics et vos alliés classiques, mais gagnerez de l'<b>Énergie Temporelle</b> qui boostera toutes vos statistiques de façon exponentielle.</p>
+        <p style="font-size: 14px; line-height: 1.6;">Retournez dans le passé pour corriger l'histoire. Vous perdrez vos Zeni, vos clics et vos alliés classiques, mais gagnerez de l'<b>Énergie Temporelle</b> qui boostera toutes vos statistiques.</p>
         <p style="font-weight: bold; margin: 20px 0;">Gain potentiel : <span id="prestige-gain-display" style="color: #3498db; font-size: 24px;">0</span> Énergie(s)</p>
         <button class="wish-btn time-btn" onclick="executePrestige()">VOYAGER DANS LE TEMPS</button>
         <button class="wish-btn" style="background: #e74c3c;" onclick="document.getElementById('prestige-modal').style.display='none'">Annuler</button>
+    </div>
+</div>
+
+<!-- MODALE ADMIN CACHÉE -->
+<div id="admin-modal" class="modal">
+    <div class="modal-content" style="border-color: #e74c3c;">
+        <h2 style="color: #e74c3c; margin-top:0;">PANEL ADMIN CACHÉ</h2>
+        <p style="font-size: 13px;">Identifiez-vous pour modifier les flux temporels.</p>
+        <div style="margin: 15px 0; text-align: left;">
+            <label style="font-size:12px;">Login :</label>
+            <input type="text" id="admin-user" style="width:100%; padding:8px; background:#000; color:#fff; border:1px solid #555; margin-top:5px; box-sizing:border-box;">
+        </div>
+        <div style="margin: 15px 0; text-align: left;">
+            <label style="font-size:12px;">Mot de passe :</label>
+            <input type="password" id="admin-pass" style="width:100%; padding:8px; background:#000; color:#fff; border:1px solid #555; margin-top:5px; box-sizing:border-box;">
+        </div>
+        <button class="wish-btn" style="background:#e74c3c;" onclick="verifyAdmin()">Connexion Admin</button>
+        <button class="wish-btn" style="background:#555;" onclick="document.getElementById('admin-modal').style.display='none'">Fermer</button>
     </div>
 </div>
 
@@ -167,7 +186,7 @@
 <div id="offline-modal" class="modal">
     <div class="modal-content">
         <h2 style="color: #3498db; margin-top:0;">ENTRAÎNEMENT TERMINÉ</h2>
-        <p style="font-size: 16px; line-height: 1.5; margin: 20px 0;">Pendant ton absence (<span id="offline-time" style="color:#f1c40f; font-weight:bold;"></span>), tes alliés ont continué à combattre sans relâche !</p>
+        <p style="font-size: 16px; line-height: 1.5; margin: 20px 0;">Pendant ton absence (<span id="offline-time" style="color:#f1c40f; font-weight:bold;"></span>), tes alliés ont continué à combattre !</p>
         <p style="color: #2ecc71; font-size: 24px; font-weight: bold; margin-bottom: 30px;">Gains : +<span id="offline-zeni"></span> Zeni</p>
         <button class="wish-btn" onclick="document.getElementById('offline-modal').style.display='none'">Récupérer</button>
     </div>
@@ -187,7 +206,8 @@
         <div class="dragon-balls">DB: <span id="db-display">0</span>/7 🟠</div>
         <div style="text-align: right;">
             <div id="power-level-container">Puissance: <span id="dps-display">0</span></div>
-            <div id="title-container">Titre : Novice</div>
+            <!-- CLIC SECRET 5 FOIS POUR OUVRIR LE PANEL ADMIN -->
+            <div id="title-container" onclick="triggerAdminModal()">Titre : Novice</div>
         </div>
     </header>
 
@@ -217,14 +237,17 @@
             </div>
         </div>
 
+        <!-- CONTENEUR ENNEMI FIXE POUR EVITER LES MOUVEMENTS DE SOURIS -->
         <div class="character" id="enemy">
             <div class="info-box">
                 <div id="enemy-name">Sbire</div>
                 <div class="hp-bar-container"><div id="enemy-hp-fill"></div></div>
                 <div style="font-size: 11px; margin-top: 5px; color: #ccc;">HP: <span id="enemy-hp-text">100</span></div>
             </div>
-            <div id="enemy-sprite" class="sprite" onclick="playerClick(event)">
-                <img src="Yamcha.png" class="asset-img" onerror="this.src=''; this.alt='🥷'; this.style.fontSize='120px';">
+            <div id="enemy-container" onclick="playerClick(event)">
+                <div id="enemy-sprite">
+                    <img src="Yamcha.png" class="asset-img" onerror="this.src=''; this.alt='🥷'; this.style.fontSize='120px';">
+                </div>
             </div>
         </div>
     </div>
@@ -257,11 +280,69 @@
         <div class="tab-panel" id="forms-shop"></div>
         <div class="tab-panel" id="capsule-shop">
             <button class="shop-btn prestige-btn" onclick="openPrestigeMenu()">Machine de Trunks ⏳<br><span style="font-size:12px; font-weight:normal; display:block; margin-top:5px;">Réinitialiser pour gagner de l'Énergie Temporelle</span></button>
+            <div id="gods-upgrade-container" style="margin-top: 15px;"></div>
+            
+            <!-- SUGGESTION 2 : IMPORT / EXPORT SAUVEGARDE -->
+            <div class="equip-item" style="margin-top:15px;">
+                <strong>Sauvegarde (Import / Export) 💾</strong><br>
+                <textarea id="save-code-box" class="save-box" placeholder="Code de sauvegarde..."></textarea>
+                <div style="display:flex; gap:10px; margin-top:5px;">
+                    <button class="shop-btn" style="text-align:center; padding:8px;" onclick="exportSaveCode()">Exporter</button>
+                    <button class="shop-btn" style="text-align:center; padding:8px;" onclick="importSaveCode()">Importer</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
+    let adminClicks = 0;
+    function triggerAdminModal() {
+        adminClicks++;
+        if (adminClicks >= 5) {
+            adminClicks = 0;
+            document.getElementById('admin-modal').style.display = 'flex';
+        }
+    }
+
+    function verifyAdmin() {
+        let u = document.getElementById('admin-user').value;
+        let p = document.getElementById('admin-pass').value;
+        if (u === 'admin' && p === 'zenkai2026') {
+            let amount = prompt("Entrez la quantité de Zeni à vous créditer :", "1000000000");
+            if (amount && !isNaN(amount)) {
+                game.zeni += parseInt(amount);
+                updateUI(); renderShop();
+                alert("Accès accordé ! Zeni ajoutés.");
+            }
+            document.getElementById('admin-modal').style.display = 'none';
+        } else {
+            alert("Identifiants incorrects.");
+        }
+    }
+
+    function exportSaveCode() {
+        let code = btoa(JSON.stringify(game));
+        let box = document.getElementById('save-code-box');
+        box.value = code;
+        box.select();
+        alert("Code de sauvegarde généré et copié !");
+        navigator.clipboard.writeText(code);
+    }
+
+    function importSaveCode() {
+        let code = document.getElementById('save-code-box').value.trim();
+        if (!code) { alert("Veuillez coller un code valide."); return; }
+        try {
+            let decoded = JSON.parse(atob(code));
+            game = decoded;
+            saveGame();
+            location.reload();
+        } catch(e) {
+            alert("Erreur : Code de sauvegarde corrompu ou invalide.");
+        }
+    }
+
     function switchTab(tabId, btnElement) {
         document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -280,7 +361,7 @@
     let game = {
         lastSaveTime: Date.now(),
         zeni: 0, medals: 0, dragonBalls: 0, senzus: 3, baseClick: 1, clickUpgrades: 0, eraIndex: 0, level: 1, 
-        state: 'farm', timeEnergy: 0, zenkaiMulti: 1,
+        state: 'farm', timeEnergy: 0, zenkaiMulti: 1, divinKi: 0,
         ki: 0, burstMode: { active: false, timeLeft: 0, currentForm: null, isOverdrive: false },
         wishes: { powerMulti: 1 }, arenaBadges: 0,
         combo: 0, lastClickTime: 0,
@@ -350,20 +431,21 @@
         setInterval(saveGame, 5000);
         setInterval(trySpawnSaibaman, 20000);
         setInterval(trySpawnCapsule, 35000);
-        setInterval(spawnAllyBlast, 500); // Animation tir des alliés toutes les 0.5s
+        setInterval(spawnAllyBlast, 500);
     }
 
     function saveGame() { 
         game.lastSaveTime = Date.now();
-        localStorage.setItem('dbzClickerSave_v23', JSON.stringify(game)); 
+        localStorage.setItem('dbzClickerSave_v24', JSON.stringify(game)); 
     }
     
     function loadGame() {
-        let saved = localStorage.getItem('dbzClickerSave_v23') || localStorage.getItem('dbzClickerSave_v22') || localStorage.getItem('dbzClickerSave_v21');
+        let saved = localStorage.getItem('dbzClickerSave_v24') || localStorage.getItem('dbzClickerSave_v23') || localStorage.getItem('dbzClickerSave_v22');
         if (saved) {
             Object.assign(game, JSON.parse(saved));
             game.state = 'farm'; game.burstMode = { active: false, timeLeft: 0, currentForm: null, isOverdrive: false }; game.ki = 0; game.combo = 0;
             if(!game.zenkaiMulti) game.zenkaiMulti = 1;
+            if(!game.divinKi) game.divinKi = 0;
             if(!game.stats) game.stats = { totalClicks: 0, kills: 0 };
             if(!game.equip) game.equip = { scouter: 0, poids: 0, armure: 0, epee: 0 };
             game.allies.forEach(a => a.assistCd = 0); 
@@ -443,7 +525,15 @@
         showDamagePopup(window.innerWidth/2, 300, "VOYAGE DANS LE TEMPS RÉUSSI !", true);
     }
 
-    // ANIMATION TIRS DES ALLIES
+    // SUGGESTION 4 : UNIVERST PARALLELLES / DIEUX DE LA DESTRUCTION
+    function buyDivinKi() {
+        if (game.timeEnergy < 5) return;
+        game.timeEnergy -= 5;
+        game.divinKi++;
+        showDamagePopup(window.innerWidth/2, 250, "+1 KI DIVIN ACQUIS !", true);
+        updateUI(); renderShop();
+    }
+
     function spawnAllyBlast() {
         if (getTotalDps() <= 0 || currentEnemy.hp <= 0 || stunTimer > 0) return;
         let blast = document.createElement('div');
@@ -468,7 +558,7 @@
             tickCounter++;
             if (tickCounter >= 10) {
                 tickCounter = 0;
-                let rect = document.getElementById('enemy-sprite').getBoundingClientRect();
+                let rect = document.getElementById('enemy-container').getBoundingClientRect();
                 showPassiveDamagePopup(rect.left + (Math.random()*rect.width), rect.top + (Math.random()*rect.height), totalDps/2);
             }
         }
@@ -564,7 +654,6 @@
         let fallInt = setInterval(() => { pos += 3; cap.style.top = pos + "px"; if (pos > window.innerHeight) { clearInterval(fallInt); cap.style.display = "none"; } }, 30);
     }
 
-    // NOUVEAU POP-UP DE BUFF DYNAMIQUE
     function showBuffPopup(text) {
         let p = document.createElement('div');
         p.className = 'buff-popup';
@@ -585,7 +674,10 @@
         renderShop();
     }
 
-    function getPrestigeMulti() { return game.wishes.powerMulti * Math.pow(1.1, game.arenaBadges) * (1 + (game.timeEnergy * 0.5)) * game.zenkaiMulti; }
+    function getPrestigeMulti() { 
+        let divinBonus = 1 + (game.divinKi * 0.5);
+        return game.wishes.powerMulti * Math.pow(1.1, game.arenaBadges) * (1 + (game.timeEnergy * 0.5)) * game.zenkaiMulti * divinBonus; 
+    }
     function getBurstMulti() { return !game.burstMode.active ? 1 : (game.burstMode.isOverdrive ? game.burstMode.currentForm.multi * 2 : game.burstMode.currentForm.multi); }
     function getComboMulti() { let multi = 1 + (game.combo * 0.05); return multi > 5 ? 5 : multi; }
     
@@ -712,7 +804,7 @@
         gain *= (1 + (game.skills[0].level * 0.10)); 
         game.zeni += gain;
         
-        let enemyRect = document.getElementById('enemy-sprite').getBoundingClientRect();
+        let enemyRect = document.getElementById('enemy-container').getBoundingClientRect();
         showDamagePopup(enemyRect.left + 80, enemyRect.top, "+" + formatNumber(gain) + " 💰", false);
 
         if (Math.random() < 0.01) { game.senzus++; updateUI();}
@@ -856,6 +948,14 @@
         }).join('');
         
         document.getElementById('forms-shop').innerHTML = formsHTML || `<div style="color:#aaa; font-style:italic; grid-column: 1 / -1;">Avancez dans les arcs pour débloquer des transformations.</div>`;
+
+        // Affichage optionnel du Super Prestige (Dieux)
+        let godsDiv = document.getElementById('gods-upgrade-container');
+        if (game.timeEnergy >= 5 || game.divinKi > 0) {
+            godsDiv.innerHTML = `<button class="shop-btn" style="background:#8e44ad; text-align:center; padding:15px;" ${game.timeEnergy < 5 ? "disabled" : ""} onclick="buyDivinKi()"><strong>Transcendance Divine (Dieux)</strong><br>Gain: +50% Puissance globale par niveau<br><span style="color:#f1c40f;">Possédé : ${game.divinKi} 🌟</span><br><span class="price-medal" style="color:#fff; margin-top:5px;">Coût : 5 ⏳</span></button>`;
+        } else {
+            godsDiv.innerHTML = "";
+        }
     }
 
     function updateUI() {
