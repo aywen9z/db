@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dragon Ball Clicker: Édition Ultime - v27</title>
+    <title>Dragon Ball Clicker: Édition Ultime - v28</title>
     <style>
         body { margin: 0; background-color: #000; color: #fff; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; display: flex; justify-content: center; overflow: hidden; width: 100vw; height: 100vh; }
         
@@ -27,14 +27,12 @@
         
         .asset-img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none; }
         
-        /* Goku décalé vers la droite (margin-left) */
         .sprite { width: 180px; height: 180px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.6)); transition: transform 0.05s; display: flex; justify-content: center; align-items: flex-end; position: relative; margin-left: 10vw;}
         
         #enemy-container { width: 250px; height: 250px; display: flex; justify-content: center; align-items: center; position: relative; cursor: pointer; }
         #enemy-sprite { width: 220px; height: 220px; position: absolute; bottom: 0; }
 
         .ally-sprite { width: 70px; height: 70px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); animation: floatAlly 2s infinite ease-in-out alternate; position: absolute; }
-        .ally-badge { position: absolute; bottom: -5px; right: -5px; background: #e74c3c; color: white; font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 10px; border: 1px solid #000; z-index: 5;}
 
         #golden-saibaman { display: none; position: absolute; width: 60px; height: 60px; cursor: pointer; z-index: 40; filter: drop-shadow(0 0 15px gold); }
         #hoi-poi-capsule { display: none; position: absolute; width: 60px; height: 60px; cursor: pointer; z-index: 45; font-size: 40px; animation: spin 2s linear infinite; filter: drop-shadow(0 0 10px #3498db); }
@@ -94,7 +92,8 @@
 
         .notif-badge { display: none; position: absolute; top: 8px; right: 8px; width: 12px; height: 12px; background: #e74c3c; border-radius: 50%; box-shadow: 0 0 8px #e74c3c; border: 2px solid #000; }
 
-        #ui-bottom { height: 35vh; background: #151515; overflow-y: auto; padding: 15px; box-sizing: border-box;}
+        /* ZONE REDUITE */
+        #ui-bottom { height: 25vh; background: #151515; overflow-y: auto; padding: 15px; box-sizing: border-box;}
         
         .tab-panel { display: none; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; align-content: start; }
         .tab-panel.active { display: grid; }
@@ -144,7 +143,8 @@
 <div id="prestige-modal" class="modal">
     <div class="modal-content">
         <h2 style="color: #9b59b6; margin-top:0;">MACHINE À VOYAGER DANS LE TEMPS</h2>
-        <p style="font-size: 14px; line-height: 1.6;">Retournez dans le passé pour corriger l'histoire. Vous perdrez vos Zeni, TOUS vos clics, vos alliés, votre équipement et Gacha. Mais vous gagnerez de l'<b>Énergie Temporelle</b> qui boostera toutes vos statistiques futures.</p>
+        <p style="font-size: 14px; line-height: 1.6; color:#e74c3c; font-weight:bold;">⚠️ ATTENTION ⚠️ Vous perdrez TOUT : Zeni, Médailles, Senzus, Dragon Balls, clics, alliés, équipement et Gacha.</p>
+        <p style="font-size: 14px;">Mais vous gagnerez de l'<b>Énergie Temporelle</b> qui boostera toutes vos statistiques futures.</p>
         <p style="font-weight: bold; margin: 20px 0;">Gain potentiel : <span id="prestige-gain-display" style="color: #3498db; font-size: 24px;">0</span> Énergie(s)</p>
         <button class="wish-btn time-btn" onclick="executePrestige()">VOYAGER DANS LE TEMPS</button>
         <button class="wish-btn" style="background: #e74c3c;" onclick="document.getElementById('prestige-modal').style.display='none'">Annuler</button>
@@ -274,7 +274,7 @@
         <div class="tab-panel" id="skills-shop"></div>
         <div class="tab-panel" id="quests-shop"></div>
         <div class="tab-panel" id="equip-shop"></div>
-        <div class="tab-panel" id="gacha-shop" style="display: block;"> <!-- Custom display via JS --></div>
+        <div class="tab-panel" id="gacha-shop" style="display: block;"></div>
         <div class="tab-panel" id="arena-shop"></div>
         <div class="tab-panel" id="forms-shop"></div>
         <div class="tab-panel" id="capsule-shop">
@@ -306,9 +306,9 @@
         let u = document.getElementById('admin-user').value;
         let p = document.getElementById('admin-pass').value;
         if (u === 'admin' && p === 'zenkai2026') {
-            let amount = prompt("Entrez la quantité de Zeni à vous créditer :", "1000000000");
-            if (amount && !isNaN(amount)) {
-                game.zeni += parseInt(amount);
+            let amount = prompt("Entrez la quantité de Zeni à vous créditer :", "1e15");
+            if (amount && !isNaN(Number(amount))) {
+                game.zeni += Number(amount);
                 updateUI(); renderShop();
                 alert("Accès accordé ! Zeni ajoutés.");
             }
@@ -320,7 +320,7 @@
 
     function hardResetAdmin() {
         if(confirm("⚠️ ATTENTION ⚠️ Voulez-vous vraiment effacer toute votre sauvegarde et recommencer de zéro ?")) {
-            localStorage.removeItem('dbzClickerSave_v27');
+            localStorage.removeItem('dbzClickerSave_v28');
             location.reload();
         }
     }
@@ -352,16 +352,19 @@
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         
         let target = document.getElementById(tabId);
-        target.style.display = tabId === 'gacha-shop' ? 'block' : 'grid'; // Gacha use block pour afficher la liste en bas
+        target.style.display = tabId === 'gacha-shop' ? 'block' : 'grid'; 
         
         btnElement.classList.add('active');
     }
 
+    // FORMATAGE DES NOMBRES INFINIS POUR ÉVITER LES NaN
     function formatNumber(num) {
-        if(num >= 1e12) return (num/1e12).toFixed(2) + "T";
-        if(num >= 1e9) return (num/1e9).toFixed(2) + "B";
-        if(num >= 1e6) return (num/1e6).toFixed(2) + "M";
-        if(num >= 1e3) return (num/1e3).toFixed(1) + "k";
+        if (isNaN(num) || !isFinite(num)) return "0";
+        if (num >= 1e15) return num.toExponential(2).replace('+', '');
+        if (num >= 1e12) return (num/1e12).toFixed(2) + "T";
+        if (num >= 1e9) return (num/1e9).toFixed(2) + "B";
+        if (num >= 1e6) return (num/1e6).toFixed(2) + "M";
+        if (num >= 1e3) return (num/1e3).toFixed(1) + "k";
         return Math.floor(num).toString();
     }
 
@@ -377,9 +380,9 @@
         equip: { scouter: 0, poids: 0, armure: 0, epee: 0 },
         
         quests: [
-            { text: "Faire des Clics", target: 25, type: "clicks", rewardTxt: "1 🏅", rewardType: "medals", rewardAmt: 1, done: false },
-            { text: "Tuer des Ennemis", target: 10, type: "kills", rewardTxt: "2 🏅", rewardType: "medals", rewardAmt: 2, done: false },
-            { text: "Atteindre Nv.", target: 10, type: "level", rewardTxt: "2 ⏳", rewardType: "time", rewardAmt: 2, done: false },
+            { text: "Faire des Clics", target: 10, type: "clicks", rewardTxt: "1 🏅", rewardType: "medals", rewardAmt: 1, done: false },
+            { text: "Tuer des Ennemis", target: 5, type: "kills", rewardTxt: "2 🏅", rewardType: "medals", rewardAmt: 2, done: false },
+            { text: "Atteindre Nv.", target: 5, type: "level", rewardTxt: "2 ⏳", rewardType: "time", rewardAmt: 2, done: false },
             { text: "Gagner des Zeni", target: 500, type: "zeni", rewardTxt: "3 🏅", rewardType: "medals", rewardAmt: 3, done: false }
         ],
         skills: [
@@ -393,21 +396,22 @@
             { id: 'piccolo', name: 'Piccolo', baseCost: 1500, dps: 100, count: 0, sprite: '<img src="Piccolo.png" class="asset-img" onerror="this.src=\'\'; this.alt=\'👽\';">', unlockEra: 1, assist: 'Makankosappo', assistCd: 0 }
         ],
         
-        // Gacha Nerfé et Ranks
         gachaBox: [
             { id: 'gohan_kid', name: 'Gohan Enfant', basePower: 10, count: 0, sprite: '<img src="Gohan_Enfant.png" class="asset-img" onerror="this.src=\'\'; this.alt=\'🧒🏻\';">' },
             { id: 'trunks_f', name: 'Trunks Futur', basePower: 50, count: 0, sprite: '<img src="Trunks_Futur.png" class="asset-img" onerror="this.src=\'\'; this.alt=\'👱🏻‍♂️\';">' },
             { id: 'gogeta', name: 'Gogeta SSJ', basePower: 200, count: 0, sprite: '<img src="Gogeta_SSJ.png" class="asset-img" onerror="this.src=\'\'; this.alt=\'🔥\';">' },
             { id: 'broly_lr', name: 'Broly LR', basePower: 500, count: 0, sprite: '<img src="Broly_LR.png" class="asset-img" onerror="this.src=\'\'; this.alt=\'👹\';">' }
         ],
-        // Formes Permanentes
+        
         forms: [
             { name: "Kaioken", cost: 10000, multi: 2, sprite: '<img src="Goku_Kaioken.png" class="asset-img" onerror="this.src=\'\'; this.alt=\'🔴\';">', color: "red", unlockEra: 1, bought: false },
             { name: "Super Saiyan", cost: 500000, multi: 5, sprite: '<img src="Goku_SSJ.png" class="asset-img" onerror="this.src=\'\'; this.alt=\'🟡\';">', color: "yellow", unlockEra: 2, bought: false },
             { name: "Super Saiyan 2", cost: 10000000, multi: 15, sprite: '<img src="Goku_SSJ2.png" class="asset-img" onerror="this.src=\'\'; this.alt=\'⚡\';">', color: "lightblue", unlockEra: 3, bought: false },
             { name: "Super Saiyan 3", cost: 500000000, multi: 50, sprite: '<img src="Goku_SSJ3.png" class="asset-img" onerror="this.src=\'\'; this.alt=\'🌟\';">', color: "gold", unlockEra: 4, bought: false },
             { name: "Super Saiyan God", cost: 25000000000, multi: 150, sprite: '<img src="Goku_God.png" class="asset-img" onerror="this.src=\'\'; this.alt=\'🔥\';">', color: "crimson", unlockEra: 5, bought: false },
-            { name: "Super Saiyan Blue", cost: 1000000000000, multi: 500, sprite: '<img src="Goku_Blue.png" class="asset-img" onerror="this.src=\'\'; this.alt=\'🔵\';">', color: "cyan", unlockEra: 6, bought: false }
+            { name: "Super Saiyan Blue", cost: 1000000000000, multi: 500, sprite: '<img src="Goku_Blue.png" class="asset-img" onerror="this.src=\'\'; this.alt=\'🔵\';">', color: "cyan", unlockEra: 6, bought: false },
+            { name: "Fusion: Gogeta", cost: 5e15, multi: 2500, sprite: '<img src="Gogeta_Base.png" class="asset-img" onerror="this.src=\'\'; this.alt=\'✨\';">', color: "orange", unlockEra: 8, bought: false },
+            { name: "Fusion: Vegeto", cost: 1e18, multi: 10000, sprite: '<img src="Vegeto_Base.png" class="asset-img" onerror="this.src=\'\'; this.alt=\'💥\';">', color: "blue", unlockEra: 9, bought: false }
         ]
     };
 
@@ -431,7 +435,6 @@
     let multiBuyOptions = [1, 5, 10, 25, 'MAX'];
     let currentMultiIndex = 0;
 
-    // TOUS LES ARCS JUSQU'AU TOURNOI DU POUVOIR
     const eras = [
         { name: "L'Enfance", bg: "url('fond_db.png') center/cover", grunts: [{name: "Yamcha", img: "Yamcha.png"}, {name: "Tao Pai Pai", img: "Tao_Pai_Pai.png"}], miniboss: "Kame Sennin", minibossSprite: "Kame_Sennin.png", boss: "Piccolo Daimao", bossSprite: "Piccolo_Daimao.png", hpBase: 20, rewardBase: 5 },
         { name: "Saga Saiyan", bg: "url('fond_saiyan.png') center/cover", grunts: [{name: "Saibaman", img: "Saibaman.png"}, {name: "Raditz", img: "Raditz.png"}], miniboss: "Nappa", minibossSprite: "Nappa.png", boss: "Vegeta", bossSprite: "Vegeta.png", hpBase: 1000, rewardBase: 250 },
@@ -442,7 +445,10 @@
         { name: "Résurrection de F", bg: "url('fond_golden.png') center/cover", grunts: [{name: "Soldat de Freezer", img: "Soldat_F.png"}, {name: "Shisami", img: "Shisami.png"}], miniboss: "Tagoma", minibossSprite: "Tagoma.png", boss: "Golden Freezer", bossSprite: "Golden_Freezer.png", hpBase: 5000000000, rewardBase: 75000000 },
         { name: "Tournoi U6 vs U7", bg: "url('fond_u6.png') center/cover", grunts: [{name: "Botamo", img: "Botamo.png"}, {name: "Magetta", img: "Magetta.png"}], miniboss: "Kyabe", minibossSprite: "Kyabe.png", boss: "Hit", bossSprite: "Hit.png", hpBase: 100000000000, rewardBase: 1000000000 },
         { name: "Saga Goku Black", bg: "url('fond_black.png') center/cover", grunts: [{name: "Zamasu", img: "Zamasu.png"}], miniboss: "Zamasu Fusionné", minibossSprite: "Zamasu_Fusion.png", boss: "Goku Black Rosé", bossSprite: "Goku_Black_Rose.png", hpBase: 2500000000000, rewardBase: 15000000000 },
-        { name: "Tournoi du Pouvoir", bg: "url('fond_top.png') center/cover", grunts: [{name: "Ribrianne", img: "Ribrianne.png"}, {name: "Dyspo", img: "Dyspo.png"}], miniboss: "Toppo", minibossSprite: "Toppo.png", boss: "Jiren", bossSprite: "Jiren.png", hpBase: 50000000000000, rewardBase: 250000000000 }
+        { name: "Tournoi du Pouvoir", bg: "url('fond_top.png') center/cover", grunts: [{name: "Ribrianne", img: "Ribrianne.png"}, {name: "Dyspo", img: "Dyspo.png"}], miniboss: "Toppo", minibossSprite: "Toppo.png", boss: "Jiren", bossSprite: "Jiren.png", hpBase: 50000000000000, rewardBase: 250000000000 },
+        { name: "Saga Baby (GT)", bg: "url('fond_baby.png') center/cover", grunts: [{name: "Sigma Force", img: "Sigma.png"}], miniboss: "Baby Mutant", minibossSprite: "Baby_Mutant.png", boss: "Baby Vegeta", bossSprite: "Baby_Vegeta.png", hpBase: 1e15, rewardBase: 5e12 },
+        { name: "Super C-17 (GT)", bg: "url('fond_c17.png') center/cover", grunts: [{name: "Mort-Vivant", img: "Mort_Vivant.png"}], miniboss: "C-17 Enfers", minibossSprite: "C17_Enfers.png", boss: "Super C-17", bossSprite: "Super_C17.png", hpBase: 5e16, rewardBase: 1e14 },
+        { name: "Dragons Maléfiques", bg: "url('fond_dragons.png') center/cover", grunts: [{name: "Haze Shenron", img: "Haze.png"}], miniboss: "Nouva Shenron", minibossSprite: "Nouva.png", boss: "Li Shenron", bossSprite: "Li_Shenron.png", hpBase: 1e18, rewardBase: 5e15 }
     ];
 
     let currentEnemy = { hp: 0, maxHp: 0, reward: 0, armor: false };
@@ -465,27 +471,22 @@
 
     function saveGame() { 
         game.lastSaveTime = Date.now();
-        localStorage.setItem('dbzClickerSave_v27', JSON.stringify(game)); 
+        localStorage.setItem('dbzClickerSave_v28', JSON.stringify(game)); 
     }
     
     function loadGame() {
-        let saved = localStorage.getItem('dbzClickerSave_v27') || localStorage.getItem('dbzClickerSave_v26');
+        let saved = localStorage.getItem('dbzClickerSave_v28') || localStorage.getItem('dbzClickerSave_v27');
         if (saved) {
             let parsed = JSON.parse(saved);
             Object.assign(game, parsed);
             game.state = 'farm'; game.combo = 0;
             if(game.currentFormIndex === undefined) game.currentFormIndex = -1;
             
-            // Mettre à jour l'array des formes si ajoutées (versioning)
-            if(game.forms.length < 6) {
-                game.forms = [
-                    { name: "Kaioken", cost: 10000, multi: 2, sprite: '<img src="Goku_Kaioken.png" class="asset-img" onerror="this.src=\'\'; this.alt=\'🔴\';">', color: "red", unlockEra: 1, bought: game.forms[0]?.bought||false },
-                    { name: "Super Saiyan", cost: 500000, multi: 5, sprite: '<img src="Goku_SSJ.png" class="asset-img" onerror="this.src=\'\'; this.alt=\'🟡\';">', color: "yellow", unlockEra: 2, bought: game.forms[1]?.bought||false },
-                    { name: "Super Saiyan 2", cost: 10000000, multi: 15, sprite: '<img src="Goku_SSJ2.png" class="asset-img" onerror="this.src=\'\'; this.alt=\'⚡\';">', color: "lightblue", unlockEra: 3, bought: false },
-                    { name: "Super Saiyan 3", cost: 500000000, multi: 50, sprite: '<img src="Goku_SSJ3.png" class="asset-img" onerror="this.src=\'\'; this.alt=\'🌟\';">', color: "gold", unlockEra: 4, bought: false },
-                    { name: "Super Saiyan God", cost: 25000000000, multi: 150, sprite: '<img src="Goku_God.png" class="asset-img" onerror="this.src=\'\'; this.alt=\'🔥\';">', color: "crimson", unlockEra: 5, bought: false },
-                    { name: "Super Saiyan Blue", cost: 1000000000000, multi: 500, sprite: '<img src="Goku_Blue.png" class="asset-img" onerror="this.src=\'\'; this.alt=\'🔵\';">', color: "cyan", unlockEra: 6, bought: false }
-                ];
+            if(game.forms.length < 8) {
+                game.forms.push(
+                    { name: "Fusion: Gogeta", cost: 5e15, multi: 2500, sprite: '<img src="Gogeta_Base.png" class="asset-img" onerror="this.src=\'\'; this.alt=\'✨\';">', color: "orange", unlockEra: 8, bought: false },
+                    { name: "Fusion: Vegeto", cost: 1e18, multi: 10000, sprite: '<img src="Vegeto_Base.png" class="asset-img" onerror="this.src=\'\'; this.alt=\'💥\';">', color: "blue", unlockEra: 9, bought: false }
+                );
             }
             
             game.allies.forEach(a => a.assistCd = 0); 
@@ -494,9 +495,9 @@
             let diffSec = Math.floor((now - game.lastSaveTime) / 1000);
             let dps = getTotalDps();
             
-            if (diffSec > 60 && dps > 0) {
+            if (diffSec > 60 && dps > 0 && isFinite(dps)) {
                 let offlineGains = Math.floor(diffSec * dps * 0.05); 
-                if(offlineGains > 0) {
+                if(offlineGains > 0 && isFinite(offlineGains)) {
                     game.zeni += offlineGains;
                     game.stats.totalZeni += offlineGains;
                     let mins = Math.floor(diffSec / 60); let hours = Math.floor(mins / 60);
@@ -524,6 +525,8 @@
             ps.style.filter = "none";
             document.getElementById('player-form').innerText = "Forme de base";
         }
+        // Il est indispensable de relancer le rendu des alliés après avoir écrasé l'HTML du sprite !
+        setTimeout(renderAllies, 10);
     }
 
     function toggleMultiBuy() {
@@ -537,10 +540,13 @@
         if (amountRequest === 'MAX') {
             while (true) {
                 let nextCost = Math.floor(basePrice * Math.pow(rate, currentLvl + count));
-                if (totalCost + nextCost <= currentZeni) { totalCost += nextCost; count++; } else break;
+                if (totalCost + nextCost <= currentZeni && isFinite(nextCost)) { totalCost += nextCost; count++; } else break;
             }
         } else {
-            for (let i = 0; i < amountRequest; i++) { totalCost += Math.floor(basePrice * Math.pow(rate, currentLvl + i)); }
+            for (let i = 0; i < amountRequest; i++) { 
+                let nextCost = Math.floor(basePrice * Math.pow(rate, currentLvl + i));
+                if(isFinite(nextCost)) totalCost += nextCost; 
+            }
             count = amountRequest;
         }
         return { count, totalCost };
@@ -561,7 +567,19 @@
         if (gain <= 0) { alert("Atteins au moins la Saga Saiyan ou accumule plus de richesses !"); return; }
         
         game.timeEnergy += gain;
-        game.zeni = 0; game.baseClick = 1; game.clickUpgrades = 0; game.autoClicks = 0; game.eraIndex = 0; game.level = 1; game.state = 'farm';
+        
+        // RESET TOTAL (Tout sauf Time Energy)
+        game.zeni = 0; 
+        game.medals = 0; 
+        game.dragonBalls = 0; 
+        game.senzus = 0; 
+        game.arenaBadges = 0;
+        game.baseClick = 1; 
+        game.clickUpgrades = 0; 
+        game.autoClicks = 0; 
+        game.eraIndex = 0; 
+        game.level = 1; 
+        game.state = 'farm';
         game.allies.forEach(a => a.count = 0);
         game.gachaBox.forEach(g => g.count = 0);
         game.skills.forEach(s => s.level = 0);
@@ -605,7 +623,7 @@
         }
 
         let totalDps = getTotalDps();
-        if (totalDps > 0 && currentEnemy.hp > 0 && stunTimer <= 0) {
+        if (totalDps > 0 && currentEnemy.hp > 0 && stunTimer <= 0 && isFinite(totalDps)) {
             damageEnemy(totalDps / 20, false, false);
             tickCounter++;
             if (tickCounter >= 10) {
@@ -623,7 +641,7 @@
 
         if (game.autoClicks > 0 && currentEnemy.hp > 0 && stunTimer <= 0) {
             let autoDmg = getCalculatedClick() * getPrestigeMulti() * getFormMulti() * game.autoClicks;
-            damageEnemy(autoDmg, false, false);
+            if(isFinite(autoDmg)) damageEnemy(autoDmg, false, false);
             let ps = document.getElementById('player-sprite');
             ps.classList.remove('anim-attack'); void ps.offsetWidth; ps.classList.add('anim-attack');
         }
@@ -648,6 +666,15 @@
         renderShop(); updateUI();
     }
 
+    function startGravityRoom() {
+        if(game.zeni < 1000) return;
+        game.zeni -= 1000;
+        let score = 0;
+        let interval = setInterval(() => { score++; }, 100);
+        setTimeout(() => { clearInterval(interval); activeBuff = { type: 'Zeni x5', timer: 30 }; showBuffPopup("✨ GRAVITÉ x100 TERMINÉE ! (Zeni x5)"); renderShop(); }, 10000);
+        showBuffPopup("🏋️ ENTRAINEMENT EN COURS...");
+    }
+
     function useSenzu() { game.senzus--; bossTimerLeft = 30; game.allies.forEach(a => a.assistCd = 0); document.getElementById('senzu-modal').style.display = "none"; document.getElementById('timer-text').innerText = bossTimerLeft; updateUI(); renderShop(); showDamagePopup(window.innerWidth/2, 300, "SENZU : RETOUR !", true); }
     
     function acceptDefeat() { 
@@ -658,8 +685,8 @@
     }
 
     function pullGacha() {
-        if (game.medals < 1) return;
-        game.medals -= 1;
+        if (game.medals < 50) return; // PASSÉ À 50 MÉDAILLES
+        game.medals -= 50;
         let roll = Math.random();
         let targetId = roll < 0.01 ? 'broly_lr' : (roll < 0.09 ? 'gogeta' : (roll < 0.30 ? 'trunks_f' : 'gohan_kid'));
         let char = game.gachaBox.find(c => c.id === targetId); char.count++;
@@ -679,7 +706,10 @@
 
     function startArena() {
         if (game.medals < 2) return;
-        game.medals -= 2; game.zeni += 50000 * Math.pow(2, game.eraIndex); game.stats.totalZeni += 50000 * Math.pow(2, game.eraIndex); game.arenaBadges++;
+        game.medals -= 2; 
+        let gain = 50000 * Math.pow(2, game.eraIndex);
+        if(isFinite(gain)) { game.zeni += gain; game.stats.totalZeni += gain; }
+        game.arenaBadges++;
         showDamagePopup(window.innerWidth/2, 300, "TOURNOI REMPORTÉ ! +1 Badge", true); updateUI(); renderShop();
     }
 
@@ -782,7 +812,7 @@
         let ps = document.getElementById('player-sprite');
         ps.classList.remove('anim-attack'); void ps.offsetWidth; ps.classList.add('anim-attack');
         
-        damageEnemy(dmg, true, true, e, isCrit);
+        if(isFinite(dmg)) damageEnemy(dmg, true, true, e, isCrit);
     }
 
     function spawnEnemy() {
@@ -808,12 +838,15 @@
             document.getElementById('enemy-hp-fill').style.background = "linear-gradient(90deg, #27ae60, #2ecc71)"; document.getElementById('boss-timer').style.display = 'none';
         }
         
+        if(!isFinite(currentEnemy.maxHp)) currentEnemy.maxHp = 1e308;
+        if(!isFinite(currentEnemy.reward)) currentEnemy.reward = 1e308;
         currentEnemy.hp = currentEnemy.maxHp; 
+        
         document.getElementById('battle-zone').style.background = era.bg; 
         document.getElementById('era-text').innerText = era.name; 
         
         let totalWave = (game.eraIndex * 100) + game.level;
-        document.getElementById('level-text').innerText = totalWave;
+        document.getElementById('level-text').innerText = formatNumber(totalWave);
         
         let ui = document.getElementById('boss-ui-container');
         if (game.state === 'boss') ui.innerHTML = `<button style="background:#c0392b; color:#fff; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-weight:bold; margin-top:10px;" onclick="acceptDefeat()">Fuir le combat</button>`; else ui.innerHTML = "";
@@ -847,11 +880,11 @@
         game.medals += 1; 
         
         let gain = currentEnemy.reward * getPrestigeMulti();
-        if (activeBuff.type === 'Zeni x2') gain *= 2;
+        if (activeBuff.type === 'Zeni x2' || activeBuff.type === 'Zeni x5') gain *= (activeBuff.type === 'Zeni x5' ? 5 : 2);
         gain *= (1 + (game.equip.poids * 0.10)); 
         gain *= (1 + (game.skills[0].level * 0.10)); 
-        game.zeni += gain;
-        game.stats.totalZeni += gain;
+        
+        if(isFinite(gain)) { game.zeni += gain; game.stats.totalZeni += gain; }
         
         let enemyRect = document.getElementById('enemy-container').getBoundingClientRect();
         showDamagePopup(enemyRect.left + 80, enemyRect.top, "+" + formatNumber(gain) + " 💰", false);
@@ -924,9 +957,10 @@
     }
 
     function getNextQuestTarget(current) {
-        let steps = [5, 10, 15, 20, 25, 50, 75, 100, 150, 200, 250, 500, 750, 1000, 2500, 5000, 10000, 50000, 100000, 1000000];
+        // Courbe douce de quêtes
+        let steps = [5, 10, 15, 25, 40, 60, 80, 100, 150, 200, 300, 400, 500, 750, 1000, 1500, 2500, 5000, 10000];
         for(let s of steps) { if (s > current) return s; }
-        return current * 2;
+        return current * 1.5; 
     }
 
     function claimQuest(index) {
@@ -935,7 +969,7 @@
         if (q.rewardType === 'medals') game.medals += q.rewardAmt;
         if (q.rewardType === 'time') game.timeEnergy += q.rewardAmt;
         
-        q.target = getNextQuestTarget(q.target);
+        q.target = Math.floor(getNextQuestTarget(q.target));
         showDamagePopup(window.innerWidth/2, 200, "Quête Accomplie !", true);
         updateUI(); renderShop();
     }
@@ -962,14 +996,12 @@
             let total = activeAllies.length;
             let angle = (Math.PI / 2) + ((i + 1) / (total + 1)) * Math.PI; 
             let radius = 130;
-            // Etend plus vers la gauche
             let leftPos = (Math.cos(angle) * radius) - 60; 
             let bottomPos = (Math.sin(angle) * radius) + 50;
             
             let extraStyle = a.isGacha ? `filter: drop-shadow(0 0 10px ${getGachaStats(a).rank.color});` : '';
             html += `<div class="ally-sprite" style="position: absolute; left: ${leftPos}px; bottom: ${bottomPos}px; ${extraStyle}">
                         ${a.sprite}
-                        <span class="ally-badge">x${a.count}</span>
                      </div>`;
         });
         
@@ -1033,6 +1065,7 @@
         let autoBtnTxt = autoInfo.count > 0 ? `Combat Mental (+${autoInfo.count}) <br><span class="price">${formatNumber(autoInfo.totalCost)}</span>` : `Combat Mental <span class="price">Fonds Insuffisants</span>`;
         
         document.getElementById('training-shop').innerHTML = `
+            <button class="shop-btn" style="background:#8e44ad; text-align:center; margin-bottom:15px;" onclick="startGravityRoom()"><strong>Salle de Gravité x100</strong><br><span style="color:#f1c40f;">Zeni x5 pendant 10s</span><br><span class="price-medal" style="color:#fff;">Coût: 1000 Zeni</span></button>
             <button class="shop-btn" ${clickInfo.count === 0 ? "disabled" : ""} onclick="buyClick()"><strong>Entraînement Physique</strong><br><span style="color:#aaa;">Puissance du clic (+1.5 par Nv)</span><br>${clickBtnTxt}</button>
             <button class="shop-btn" ${autoInfo.count === 0 ? "disabled" : ""} onclick="buyAutoClick()"><strong>Combat Mental (Autoclick)</strong><br><span style="color:#3498db;">+1 Clic Automatique par seconde</span><br><span style="font-size:12px; color:#2ecc71;">Niveau Actuel: ${game.autoClicks}</span><br>${autoBtnTxt}</button>
         `;
@@ -1047,7 +1080,6 @@
             <div class="equip-item"><span class="equip-icon">🗡️</span> <strong>Épée Z</strong> Nv.${game.equip.epee} <br><span style="color:#2ecc71;">+${game.equip.epee*15}% Dégâts par seconde (DPS)</span></div>
         `;
 
-        // MENU GACHA AVEC LISTE DES PERSONNAGES
         let gachaListHtml = game.gachaBox.map(c => {
             let stats = getGachaStats(c);
             return `<div class="equip-item" style="border-left: 4px solid ${stats.rank.color};">
@@ -1057,23 +1089,22 @@
         }).join('');
 
         document.getElementById('gacha-shop').innerHTML = `
-            <button class="shop-btn gacha-btn" style="margin-bottom: 15px;" ${game.medals < 1 ? "disabled" : ""} onclick="pullGacha()">Tirer une Capsule Aléatoire<br><span style="font-size:12px; font-weight:normal;">Obtenez des personnages et montez leurs rangs (R -> LR)</span><br><span class="price-medal" style="color:#fff; margin-top:5px;">1 🏅</span></button>
+            <button class="shop-btn gacha-btn" style="margin-bottom: 15px;" ${game.medals < 50 ? "disabled" : ""} onclick="pullGacha()">Tirer une Capsule Aléatoire<br><span style="font-size:12px; font-weight:normal;">Obtenez des personnages et montez leurs rangs (R -> LR)</span><br><span class="price-medal" style="color:#fff; margin-top:5px;">50 🏅</span></button>
             <div style="color: #aaa; font-size: 14px; font-weight: bold; margin-bottom: 10px;">Collection Capsule Corp</div>
             ${gachaListHtml}
         `;
 
         document.getElementById('arena-shop').innerHTML = `<button class="shop-btn" style="background:#c0392b; font-size:16px; padding:20px; text-align:center;" ${game.medals < 2 ? "disabled" : ""} onclick="startArena()">Lancer le Tournoi<br><span style="font-size:12px; font-weight:normal;">Gagnez 1 Badge (Boost x1.1) et des Zeni</span><br><span class="price-medal" style="color:#fff; margin-top:5px;">2 🏅</span></button><div class="equip-item" style="text-align:center; margin-top:10px;">Badges obtenus: <strong>${game.arenaBadges}</strong><br>Boost total: +${game.arenaBadges*10}%</div>`;
 
-        // FORMES PERMANENTES
         let formsHTML = game.forms.map((f,i) => {
             if (game.eraIndex < f.unlockEra) return "";
             if (!f.bought) {
-                return `<button class="shop-btn" ${game.zeni < f.cost ? "disabled" : ""} onclick="buyForm(${i})"><strong>Débloquer ${f.name}</strong><br><span style="font-size:11px; color:#2ecc71;">Puissance et Clics x${f.multi} (Permanent)</span><br><span class="price">${formatNumber(f.cost)} Zeni</span></button>`;
+                return `<button class="shop-btn" ${game.zeni < f.cost ? "disabled" : ""} onclick="buyForm(${i})"><strong>Débloquer ${f.name}</strong><br><span style="font-size:11px; color:#2ecc71;">Puissance et Clics x${formatNumber(f.multi)} (Permanent)</span><br><span class="price">${formatNumber(f.cost)} Zeni</span></button>`;
             }
             if (game.currentFormIndex === i) {
-                return `<button class="shop-btn" style="background:#27ae60; color:#fff;" disabled><strong>${f.name} (Actif)</strong><br><span style="font-size:11px;">Puissance et Clics x${f.multi}</span></button>`;
+                return `<button class="shop-btn" style="background:#27ae60; color:#fff;" disabled><strong>${f.name} (Actif)</strong><br><span style="font-size:11px;">Puissance et Clics x${formatNumber(f.multi)}</span></button>`;
             }
-            return `<button class="shop-btn" style="background:#34495e;" onclick="activateForm(${i})"><strong>Passer en ${f.name}</strong><br><span style="font-size:11px; color:#aaa;">Puissance et Clics x${f.multi}</span></button>`;
+            return `<button class="shop-btn" style="background:#34495e;" onclick="activateForm(${i})"><strong>Passer en ${f.name}</strong><br><span style="font-size:11px; color:#aaa;">Puissance et Clics x${formatNumber(f.multi)}</span></button>`;
         }).join('');
         
         document.getElementById('forms-shop').innerHTML = formsHTML || `<div style="color:#aaa; font-style:italic; grid-column: 1 / -1;">Avancez dans les arcs pour débloquer des transformations.</div>`;
@@ -1104,7 +1135,7 @@
     }
     
     function updateEnemyUI() {
-        if(currentEnemy.hp < 0) currentEnemy.hp = 0;
+        if(currentEnemy.hp < 0 || !isFinite(currentEnemy.hp)) currentEnemy.hp = 0;
         document.getElementById('enemy-hp-fill').style.width = ((currentEnemy.hp / currentEnemy.maxHp) * 100) + "%";
         document.getElementById('enemy-hp-text').innerText = formatNumber(currentEnemy.hp);
     }
