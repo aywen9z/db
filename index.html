@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dragon Ball Clicker: Édition Ultime - v25</title>
+    <title>Dragon Ball Clicker: Édition Ultime - v26</title>
     <style>
         body { margin: 0; background-color: #000; color: #fff; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; display: flex; justify-content: center; overflow: hidden; width: 100vw; height: 100vh; }
         
         #game-container { width: 100vw; height: 100vh; display: flex; flex-direction: column; position: relative;}
         
         header { background: linear-gradient(to bottom, #e67e22, #d35400); color: #fff; padding: 10px 20px; display: flex; justify-content: space-around; font-size: 14px; align-items: center; border-bottom: 4px solid #a04000; font-weight: bold; text-shadow: 1px 1px 2px #000;}
-        .dragon-balls { color: #f39c12; }
+        .dragon-balls { color: #f39c12; font-size: 12px; letter-spacing: 2px;}
         .medals { color: #9b59b6; }
         .senzu { color: #2ecc71; }
         .time-energy { color: #3498db; }
@@ -34,7 +34,6 @@
 
         .ally-sprite { width: 70px; height: 70px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); animation: floatAlly 2s infinite ease-in-out alternate; }
         
-        /* SAIBAMAN REDUIT */
         #golden-saibaman { display: none; position: absolute; width: 60px; height: 60px; cursor: pointer; z-index: 40; filter: drop-shadow(0 0 15px gold); }
         #hoi-poi-capsule { display: none; position: absolute; width: 60px; height: 60px; cursor: pointer; z-index: 45; font-size: 40px; animation: spin 2s linear infinite; filter: drop-shadow(0 0 10px #3498db); }
         @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -94,7 +93,6 @@
         .tab-btn:hover { background: #222; color: #fff; }
         .tab-btn.active { background: #e67e22; color: #fff; text-shadow: 1px 1px 2px #000; box-shadow: inset 0 -4px 0 #d35400; }
 
-        /* NOTIFICATION DOTS */
         .notif-badge { display: none; position: absolute; top: 8px; right: 8px; width: 12px; height: 12px; background: #e74c3c; border-radius: 50%; box-shadow: 0 0 8px #e74c3c; border: 2px solid #000; }
 
         #ui-bottom { height: 35vh; background: #151515; overflow-y: auto; padding: 15px; box-sizing: border-box;}
@@ -203,7 +201,7 @@
         <div class="medals">Médailles: <span id="medal-display">0</span> 🏅</div>
         <div class="senzu">Senzu: <span id="senzu-display">0</span> 🫘</div>
         <div class="time-energy">Énergie T.: <span id="time-display">0</span> ⏳</div>
-        <div class="dragon-balls">DB: <span id="db-display">0</span>/7 🟠</div>
+        <div class="dragon-balls">DB: <span id="db-display">⚪⚪⚪⚪⚪⚪⚪</span></div>
         <div style="text-align: right;">
             <div id="power-level-container">Puissance: <span id="dps-display">0</span></div>
             <div id="title-container" onclick="triggerAdminModal()">Titre : Novice</div>
@@ -214,7 +212,7 @@
         <div class="fx-layer" id="fx-layer"></div>
         <div id="buff-display"></div>
         <div id="level-display">
-            ARC <span id="era-text">DB</span><br>Vague <span id="level-text">1</span>/100
+            ARC <span id="era-text">DB</span><br>Vague Totale : <span id="level-text">1</span>
             <div id="boss-timer">Temps: <span id="timer-text">30</span>s</div>
             <div id="boss-ui-container"></div>
         </div>
@@ -230,7 +228,6 @@
                 </div>
                 <div id="player-sprite" class="sprite">
                     <img src="Goku_Base.png" class="asset-img" onerror="this.src=''; this.alt='👦🏻'; this.style.fontSize='100px';">
-                    <!-- Les alliés s'affichent ici en arc de cercle -->
                     <div id="allies-field"></div>
                 </div>
             </div>
@@ -356,7 +353,7 @@
 
     let game = {
         lastSaveTime: Date.now(),
-        zeni: 0, medals: 0, dragonBalls: 0, senzus: 3, baseClick: 1, clickUpgrades: 0, eraIndex: 0, level: 1, 
+        zeni: 0, medals: 0, dragonBalls: 0, senzus: 3, baseClick: 1, clickUpgrades: 0, autoClicks: 0, eraIndex: 0, level: 1, 
         state: 'farm', timeEnergy: 0, zenkaiMulti: 1, divinKi: 0,
         ki: 0, burstMode: { active: false, timeLeft: 0, currentForm: null, isOverdrive: false },
         wishes: { powerMulti: 1 }, arenaBadges: 0,
@@ -397,7 +394,6 @@
     let multiBuyOptions = [1, 5, 10, 25, 'MAX'];
     let currentMultiIndex = 0;
 
-    // HP FORTEMENT REDUITS
     const eras = [
         { name: "L'Enfance", bg: "url('fond_db.png') center/cover", grunts: [{name: "Yamcha", img: "Yamcha.png"}, {name: "Tao Pai Pai", img: "Tao_Pai_Pai.png"}, {name: "Tambourine", img: "Tambourine.png"}], miniboss: "Kame Sennin", minibossSprite: "Kame_Sennin.png", boss: "Piccolo Daimao", bossSprite: "Piccolo_Daimao.png", hpBase: 20, rewardBase: 5 },
         { name: "Saga Saiyan", bg: "url('fond_saiyan.png') center/cover", grunts: [{name: "Saibaman", img: "Saibaman.png"}, {name: "Raditz", img: "Raditz.png"}], miniboss: "Nappa", minibossSprite: "Nappa.png", boss: "Vegeta", bossSprite: "Vegeta.png", hpBase: 1000, rewardBase: 250 },
@@ -409,6 +405,7 @@
     let stunTimer = 0;
     let tickCounter = 0;
     const baseClickCost = 5;
+    const baseAutoCost = 500;
 
     function init() {
         loadGame(); spawnEnemy(); updateUI(); renderShop(); renderAllies();
@@ -422,14 +419,15 @@
 
     function saveGame() { 
         game.lastSaveTime = Date.now();
-        localStorage.setItem('dbzClickerSave_v25', JSON.stringify(game)); 
+        localStorage.setItem('dbzClickerSave_v26', JSON.stringify(game)); 
     }
     
     function loadGame() {
-        let saved = localStorage.getItem('dbzClickerSave_v25') || localStorage.getItem('dbzClickerSave_v24') || localStorage.getItem('dbzClickerSave_v23');
+        let saved = localStorage.getItem('dbzClickerSave_v26') || localStorage.getItem('dbzClickerSave_v25') || localStorage.getItem('dbzClickerSave_v24');
         if (saved) {
             Object.assign(game, JSON.parse(saved));
             game.state = 'farm'; game.burstMode = { active: false, timeLeft: 0, currentForm: null, isOverdrive: false }; game.ki = 0; game.combo = 0;
+            if(game.autoClicks === undefined) game.autoClicks = 0;
             if(!game.zenkaiMulti) game.zenkaiMulti = 1;
             if(!game.divinKi) game.divinKi = 0;
             if(!game.stats) game.stats = { totalClicks: 0, kills: 0, totalZeni: 0 };
@@ -502,7 +500,7 @@
         if (gain <= 0) { alert("Atteins au moins la Saga Saiyan ou accumule plus de richesses !"); return; }
         
         game.timeEnergy += gain;
-        game.zeni = 0; game.baseClick = 1; game.clickUpgrades = 0; game.eraIndex = 0; game.level = 1; game.state = 'farm';
+        game.zeni = 0; game.baseClick = 1; game.clickUpgrades = 0; game.autoClicks = 0; game.eraIndex = 0; game.level = 1; game.state = 'farm';
         game.allies.forEach(a => a.count = 0); game.forms.forEach(f => f.bought = false);
         game.combo = 0; game.ki = 0; game.burstMode.active = false;
         
@@ -556,6 +554,14 @@
     function gameLoop() {
         let modalsOpen = document.querySelectorAll('.modal');
         for(let m of modalsOpen) { if(m.style.display === "flex") return; }
+
+        // Autoclicker (Combat Mental)
+        if (game.autoClicks > 0 && currentEnemy.hp > 0 && stunTimer <= 0) {
+            let autoDmg = getCalculatedClick() * getPrestigeMulti() * getBurstMulti() * game.autoClicks;
+            damageEnemy(autoDmg, false, false);
+            let ps = document.getElementById('player-sprite');
+            ps.classList.remove('anim-attack'); void ps.offsetWidth; ps.classList.add('anim-attack');
+        }
 
         if (activeBuff.timer > 0) {
             activeBuff.timer--;
@@ -729,7 +735,7 @@
 
     function spawnEnemy() {
         let era = eras[game.eraIndex]; currentEnemy.armor = false;
-        let hpMulti = Math.pow(1.04, game.level - 1); // Nerf du multiplicateur de HP (1.1 -> 1.04)
+        let hpMulti = Math.pow(1.04, game.level - 1);
 
         if (game.level === 100) {
             game.state = 'boss'; currentEnemy.maxHp = Math.floor(era.hpBase * hpMulti * 20); currentEnemy.reward = Math.floor(era.rewardBase * hpMulti * 30); currentEnemy.armor = true; 
@@ -753,7 +759,10 @@
         currentEnemy.hp = currentEnemy.maxHp; 
         document.getElementById('battle-zone').style.background = era.bg; 
         document.getElementById('era-text').innerText = era.name; 
-        document.getElementById('level-text').innerText = game.level + "/100";
+        
+        // AFFICHAGE VAGUE GLOBALE (TOTAL)
+        let totalWave = (game.eraIndex * 100) + game.level;
+        document.getElementById('level-text').innerText = totalWave;
         
         let ui = document.getElementById('boss-ui-container');
         if (game.state === 'boss') ui.innerHTML = `<button style="background:#c0392b; color:#fff; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-weight:bold; margin-top:10px;" onclick="acceptDefeat()">Fuir le combat</button>`; else ui.innerHTML = "";
@@ -784,7 +793,7 @@
 
     function enemyDefeated() {
         game.stats.kills++; 
-        game.medals += 1; // 1 Médaille garantie par ennemi !
+        game.medals += 1; 
         
         let gain = currentEnemy.reward * getPrestigeMulti();
         if (activeBuff.type === 'Zeni x2') gain *= 2;
@@ -801,6 +810,7 @@
         
         if (game.state === 'miniboss') {
             game.medals += 5; showBuffPopup("🔥 BOOST MINI-BOSS ! (Dég x2)"); activeBuff = { type: 'Dégâts x2', timer: 10 };
+            game.level++; // <--- FIX DU BUG ICI
         } else if (game.state === 'boss') {
             game.medals += 15; showBuffPopup("✨ BOOST BOSS ! (Zeni x2)"); activeBuff = { type: 'Zeni x2', timer: 15 };
             if (bossTimerLeft <= 5) { game.zenkaiMulti += 0.05; showDamagePopup(window.innerWidth/2, 100, "ZENKAI BOOST ! (+5% Puissance)", true); }
@@ -824,16 +834,24 @@
 
     function buyClick() {
         let req = multiBuyOptions[currentMultiIndex];
-        let info = getMultiBuyDetails(baseClickCost, 1.3, game.clickUpgrades, game.zeni, req); // Nerf cout (1.5 -> 1.3)
+        let info = getMultiBuyDetails(baseClickCost, 1.3, game.clickUpgrades, game.zeni, req); 
         if (info.count > 0 && game.zeni >= info.totalCost) {
             game.zeni -= info.totalCost; game.clickUpgrades += info.count; game.baseClick = 1 + Math.floor(game.clickUpgrades * 1.5); updateUI(); renderShop();
+        }
+    }
+
+    function buyAutoClick() {
+        let req = multiBuyOptions[currentMultiIndex];
+        let info = getMultiBuyDetails(baseAutoCost, 1.5, game.autoClicks, game.zeni, req); 
+        if (info.count > 0 && game.zeni >= info.totalCost) {
+            game.zeni -= info.totalCost; game.autoClicks += info.count; updateUI(); renderShop();
         }
     }
 
     function buyAlly(index) {
         let a = game.allies[index];
         let req = multiBuyOptions[currentMultiIndex];
-        let info = getMultiBuyDetails(a.baseCost, 1.15, a.count, game.zeni, req); // Nerf cout (1.2 -> 1.15)
+        let info = getMultiBuyDetails(a.baseCost, 1.15, a.count, game.zeni, req); 
         if (info.count > 0 && game.zeni >= info.totalCost) {
             game.zeni -= info.totalCost; a.count += info.count; renderShop(); updateUI(); renderAllies();
         }
@@ -882,13 +900,10 @@
         game.allies.forEach(a => { if(a.count > 0) activeAllies.push(a); });
         game.gachaBox.forEach(c => { if(c.count > 0) activeAllies.push({...c, isGacha: true}); });
         
-        // Calcul mathématique pour positionner en Arc de Cercle sur la gauche
         activeAllies.forEach((a, i) => {
             let total = activeAllies.length;
-            // Angle de 90° (top) à 270° (bottom) sur la gauche
             let angle = (Math.PI / 2) + ((i + 1) / (total + 1)) * Math.PI; 
             let radius = 130;
-            // Cosinus négatif donne la gauche. 
             let leftPos = (Math.cos(angle) * radius) - 40; 
             let bottomPos = (Math.sin(angle) * radius) + 50;
             
@@ -902,10 +917,13 @@
     function renderShop() {
         let req = multiBuyOptions[currentMultiIndex];
         
-        // VERIFICATION POUR LES PASTILLES DE NOTIFICATION
         let notifTraining = false;
         let clickInfo = getMultiBuyDetails(baseClickCost, 1.3, game.clickUpgrades, game.zeni, req);
         if(clickInfo.count > 0 && game.zeni >= clickInfo.totalCost) notifTraining = true;
+        
+        let autoInfo = getMultiBuyDetails(baseAutoCost, 1.5, game.autoClicks, game.zeni, req);
+        if(autoInfo.count > 0 && game.zeni >= autoInfo.totalCost) notifTraining = true;
+
         document.getElementById('notif-training').style.display = notifTraining ? 'block' : 'none';
 
         let notifAllies = false;
@@ -949,9 +967,13 @@
         }).join('');
         document.getElementById('notif-skills').style.display = notifSkills ? 'block' : 'none';
 
-        // UPDATE PANELS
         let clickBtnTxt = clickInfo.count > 0 ? `Pompes (+${clickInfo.count}) <br><span class="price">${formatNumber(clickInfo.totalCost)}</span>` : `Pompes <span class="price">Fonds Insuffisants</span>`;
-        document.getElementById('training-shop').innerHTML = `<button class="shop-btn" ${clickInfo.count === 0 ? "disabled" : ""} onclick="buyClick()"><strong>Entraînement de base</strong><br><span style="color:#aaa;">Puissance du clic</span><br>${clickBtnTxt}</button>`;
+        let autoBtnTxt = autoInfo.count > 0 ? `Combat Mental (+${autoInfo.count}) <br><span class="price">${formatNumber(autoInfo.totalCost)}</span>` : `Combat Mental <span class="price">Fonds Insuffisants</span>`;
+        
+        document.getElementById('training-shop').innerHTML = `
+            <button class="shop-btn" ${clickInfo.count === 0 ? "disabled" : ""} onclick="buyClick()"><strong>Entraînement Physique</strong><br><span style="color:#aaa;">Puissance du clic (+1.5 par Nv)</span><br>${clickBtnTxt}</button>
+            <button class="shop-btn" ${autoInfo.count === 0 ? "disabled" : ""} onclick="buyAutoClick()"><strong>Combat Mental (Autoclick)</strong><br><span style="color:#3498db;">+1 Clic Automatique par seconde</span><br><span style="font-size:12px; color:#2ecc71;">Niveau Actuel: ${game.autoClicks}</span><br>${autoBtnTxt}</button>
+        `;
         document.getElementById('allies-shop').innerHTML = alliesHtml;
         document.getElementById('quests-shop').innerHTML = questsHtml;
         document.getElementById('skills-shop').innerHTML = skillsHtml;
@@ -988,7 +1010,12 @@
     function updateUI() {
         document.getElementById('zeni-display').innerText = formatNumber(game.zeni);
         document.getElementById('medal-display').innerText = formatNumber(game.medals);
-        document.getElementById('db-display').innerText = game.dragonBalls;
+        
+        // AFFICHAGE VISUEL DES DRAGON BALLS
+        let dbHTML = "";
+        for(let i=1; i<=7; i++) { dbHTML += i <= game.dragonBalls ? "🟠" : "⚪"; }
+        document.getElementById('db-display').innerText = dbHTML;
+        
         document.getElementById('senzu-display').innerText = game.senzus;
         document.getElementById('time-display').innerText = formatNumber(game.timeEnergy);
         
